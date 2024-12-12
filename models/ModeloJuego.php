@@ -46,9 +46,19 @@ class Juego {
         $ficha = $this->tablero->casillas[$coordenadas[0]][$coordenadas[1]]->getContenido();
         $casillasMovibles = $ficha->movimiento();
         foreach($casillasMovibles as $coordenadasCasilla) {
-            $casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]];
-            $casilla->setMovible(true);
-            $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
+            $casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]] ?? '';
+            if (is_object($casilla)) {
+                if(is_object($casilla->getContenido())) {
+                    if($casilla->getContenido()->getColor() == $ficha->getColor()) {
+                        echo "blanca";
+                    } else {
+                        $casilla->setBoton("<button type='submit' class='matar' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
+                    }
+                } else {
+                    $casilla->setMovible(true);
+                    $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
+                }
+            }
         }
     }
  
