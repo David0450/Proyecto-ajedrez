@@ -1,9 +1,9 @@
 <?php
 abstract class Pieza {
-    private int|null $fila;
+    protected int|null $fila;
 
-    private int|null $columna;
-    private string $color;
+    protected int|null $columna;
+    protected string $color;
 
     private bool $estado;
 
@@ -35,6 +35,11 @@ abstract class Pieza {
 
     public function setColumna($columna) {
         $this->columna = $columna;
+    }
+
+    public function setCoordenadas($coordenadas) {
+        $this->fila = $coordenadas[0];
+        $this->columna = $coordenadas[1];
     }
 
     abstract public function movimiento();

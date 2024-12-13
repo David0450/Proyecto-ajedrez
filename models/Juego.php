@@ -68,10 +68,13 @@ class Juego {
 
     public function mostrarMovimientos($coordenadas) {
         $this->limpiarBotones();
-        $ficha = $this->tablero->casillas[$coordenadas[0]][$coordenadas[1]]->getContenido();
+        $casilla = $this->tablero->getCasilla($coordenadas);
+        $ficha = $casilla->getContenido();
+        //$ficha = $this->tablero->casillas[$coordenadas[0]][$coordenadas[1]]->getContenido();
         $casillasMovibles = $ficha->movimiento();
         foreach($casillasMovibles as $coordenadasCasilla) {
-            $casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]] ?? '';
+            $casilla = $this->tablero->getCasilla($coordenadasCasilla) ?? null;
+            //$casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]] ?? '';
             if (is_object($casilla)) {
                 if(is_object($casilla->getContenido())) {
                     if($casilla->getContenido()->getColor() != $ficha->getColor()) {
@@ -87,12 +90,20 @@ class Juego {
  
     public function moverFicha($casilla, $ficha) {
         $this->limpiarBotones();
-        $pieza = $this->tablero->casillas[$ficha[0]][$ficha[1]]->getContenido();
+        if ($this->turno == 1) {
+            $jugadorActual = $this->jugadores['blanca'];
+        } elseif ($this->turno == 2) {
+            $jugadorActual = $this->jugadores['negra'];
+        }
+        $jugadorActual->moverFicha($casilla, $ficha);
+
+
+        /*$pieza = $this->tablero->casillas[$ficha[0]][$ficha[1]]->getContenido();
         $pieza->setFila($casilla[0]);
         $pieza->setColumna($casilla[1]);
         $this->tablero->casillas[$casilla[0]][$casilla[1]]->setContenido($pieza);
         $this->tablero->casillas[$ficha[0]][$ficha[1]]->setContenido("");
-        $this->pasarTurno();
+        $this->pasarTurno();*/
     }
 
     public function limpiarBotones() {

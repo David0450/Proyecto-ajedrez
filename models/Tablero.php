@@ -43,6 +43,17 @@ class Tablero {
         $this->casillas[6][7]->setContenido(new Peon("blanca",$this->casillas[6][7]->getFila(), $this->casillas[6][7]->getColumna()));
     }
 
+    public function getCasilla($coordenadas) {
+        foreach ($this->casillas as $fila) {
+            foreach ($fila as $casilla) {
+                if ($casilla->getCoordenadas() == $coordenadas) {
+                    return $casilla;
+                }
+            }
+        }
+        return false;
+    }
+
     public function __toString()
     {
         $tabla = "<table id='tabla'>";

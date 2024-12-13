@@ -1,7 +1,16 @@
 <?php
 class Caballo extends Pieza {
     public function movimiento() {
-        return [[$this->getFila()-1, $this->getColumna()-2],[$this->getFila()+1,$this->getColumna()-2],[$this->getFila()-1, $this->getColumna()+2],[$this->getFila()+1,$this->getColumna()+2],[$this->getFila()-2, $this->getColumna()-1],[$this->getFila()-2,$this->getColumna()+1], [$this->getFila()+2, $this->getColumna()-1],[$this->getFila()+2,$this->getColumna()+1]];
+        return [
+            ($this->getFila()-1).$this->getColumna()-2,
+            ($this->getFila()+1).$this->getColumna()-2,
+            ($this->getFila()-1).$this->getColumna()+2,
+            ($this->getFila()+1).$this->getColumna()+2,
+            ($this->getFila()-2).$this->getColumna()-1,
+            ($this->getFila()-2).$this->getColumna()+1,
+            ($this->getFila()+2).$this->getColumna()-1,
+            ($this->getFila()+2).$this->getColumna()+1
+        ];
     }
 
     public function __toString()

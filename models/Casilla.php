@@ -14,7 +14,8 @@ class Casilla {
 
     
     public function getCoordenadas() {
-        return $this->fila.$this->columna;
+        $coordenadas = $this->fila.$this->columna;
+        return $coordenadas;
     }
 
     public function getFila() {

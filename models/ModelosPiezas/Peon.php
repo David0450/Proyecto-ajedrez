@@ -4,15 +4,15 @@ class Peon extends Pieza {
         $casillas = [];
         if ($this->getColor() == "blanca") {
             if ($this->getFila() == 6) {
-                $casillas[] = [$this->getFila()-2, $this->getColumna()];
+                $casillas[] = ($this->getFila()-2).$this->getColumna();
             }
-            $casillas[] = [$this->getFila()-1, $this->getColumna()];
+            $casillas[] = ($this->getFila()-1).$this->getColumna();
             return $casillas;
         } elseif ($this->getColor() == "negra") {
             if ($this->getFila() == 1) {
-                $casillas[] = [$this->getFila()+2, $this->getColumna()];
+                $casillas[] = ($this->getFila()+2).$this->getColumna();
             }
-            $casillas[] = [$this->getFila()+1, $this->getColumna()];
+            $casillas[] = ($this->getFila()+1).$this->getColumna();
             return $casillas;
         }
     }

@@ -43,7 +43,7 @@
             if (isset($_GET["seleccionarFicha"])) {
                 $juego->mostrarMovimientos($_GET["seleccionarFicha"]);
             } elseif (isset($_GET["moverFicha"]) && !isset($_GET["seleccionarFicha"])) {
-                $juego->moverFicha([$_GET["moverFicha"][0],$_GET["moverFicha"][1]], [$_GET["moverFicha"][3], $_GET["moverFicha"][4]]);
+                $juego->moverFicha($_GET["moverFicha"][0].$_GET["moverFicha"][1] , $_GET["moverFicha"][3].$_GET["moverFicha"][4]);
                 $juego->seleccionarFicha();
             } else {
                 $juego->seleccionarFicha();
