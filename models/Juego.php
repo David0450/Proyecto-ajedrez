@@ -1,15 +1,36 @@
 <?php
-require_once("./models/ModeloTablero.php");
 
 class Juego {
     private $turno = 1;
     private $tablero;
+    private $jugadores;
     public function __construct() {
         $this->tablero = new Tablero();
+        $this->jugadores = [
+            "blanca" => new Jugador("blanca"),
+            "negra" => new Jugador("negra")
+        ];
+        $this->asociarPiezas();
     }
 
     public function mostrarTablero() {
         return $this->tablero;
+    }
+
+    public function asociarPiezas() {
+        for($i = 0; $i < 2; $i++) {
+            foreach($this->tablero->casillas[$i] as $casilla) {
+                $piezasNegras[] = $casilla->getContenido();
+            }
+        }
+        for($i = 6; $i < 8; $i++) {
+            foreach($this->tablero->casillas[$i] as $casilla) {
+                $piezasBlancas[] = $casilla->getContenido();
+            }
+        }
+
+        $this->jugadores["blanca"]->setFichasVivas($piezasBlancas);
+        $this->jugadores["negra"]->setFichasVivas($piezasNegras);
     }
 
     public function getTurno() {
@@ -18,6 +39,10 @@ class Juego {
 
     public function getTablero() {
         return $this->tablero;
+    }
+
+    public function getJugadores() {
+        return $this->jugadores;
     }
 
     public function pasarTurno() {
@@ -49,9 +74,7 @@ class Juego {
             $casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]] ?? '';
             if (is_object($casilla)) {
                 if(is_object($casilla->getContenido())) {
-                    if($casilla->getContenido()->getColor() == $ficha->getColor()) {
-                        echo "blanca";
-                    } else {
+                    if($casilla->getContenido()->getColor() != $ficha->getColor()) {
                         $casilla->setBoton("<button type='submit' class='matar' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
                     }
                 } else {

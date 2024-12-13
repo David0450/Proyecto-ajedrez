@@ -1,5 +1,4 @@
 <?php
-require_once("./models/ModeloPieza.php");
 class Reina extends Pieza {
     public function movimiento() {
         

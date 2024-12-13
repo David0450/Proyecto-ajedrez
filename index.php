@@ -12,7 +12,18 @@
 </head>
 <body>
     <?php
-    require_once("./models/ModeloJuego.php");
+    require_once("./models/Juego.php");
+    require_once("./models/Tablero.php");
+    require_once("./models/Casilla.php");
+    require_once("./models/Jugador.php");
+    require_once("./models/Pieza.php");
+    require_once("./models/ModelosPiezas/Alfil.php");
+    require_once("./models/ModelosPiezas/Caballo.php");
+    require_once("./models/ModelosPiezas/Peon.php");
+    require_once("./models/ModelosPiezas/Reina.php");
+    require_once("./models/ModelosPiezas/Rey.php");
+    require_once("./models/ModelosPiezas/Torre.php");
+
     ?>
     <header>
         <h1>Mi Ajedrez</h1>
@@ -20,7 +31,6 @@
     <main>
         <?php
         session_start();
-        //unset($_SESSION["juego"]);
         $juego = new Juego();
         if (!isset($_SESSION['juego'])) {
             $_SESSION['juego'] = serialize($juego); // Guardar en la sesión
@@ -39,21 +49,29 @@
                 $juego->seleccionarFicha();
             }
             $_SESSION['juego'] = serialize($juego);
-        }
-
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        }else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unset($_SESSION["juego"]);
             header("Location: .");
+        } else if (!isset($_SERVER["REQUEST_METHOD"])) {
+            unset($_SESSION["juego"]);
         }
         ?>
         <form action="#" method="get">
             <?= $juego->mostrarTablero();?>
         </form>
         <div class="info">
-            <h2><?=$juego->getTurno() == 1 ? "Juegan Blancas" : "Juegan Negras" ?></h2>
+            <h2>Juegan <?=$juego->getTurno() == 1 ? "<span class='blanca'>Blancas</span>" : "<span class='negra'>Negras</span>" ?></h2>
+            <div class="piezasMuertas">
+                <h2>Piezas fuera de juego</h2>
+                <div class="blanca">
+                    <h2><span class="blanca">Blancas</span></h2>
+                </div><!--
+                --><div class="negra">
+                    <h2><span class="negra">Negras</span></h2>
+                </div>
+            </div>
             <form action="#" method="post">
-                <button type="submit" name="borrarSesion">Borrar Cookie</button>
-                <h1><?= $juego->getTurno();?></h1>
+                <button type="submit" name="borrarSesion">Reiniciar partida</button>
             </form>
         </div>
     </main>

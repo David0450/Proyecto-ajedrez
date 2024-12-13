@@ -1,5 +1,4 @@
 <?php
-require_once("./models/ModeloPieza.php");
 class Caballo extends Pieza {
     public function movimiento() {
         return [[$this->getFila()-1, $this->getColumna()-2],[$this->getFila()+1,$this->getColumna()-2],[$this->getFila()-1, $this->getColumna()+2],[$this->getFila()+1,$this->getColumna()+2],[$this->getFila()-2, $this->getColumna()-1],[$this->getFila()-2,$this->getColumna()+1], [$this->getFila()+2, $this->getColumna()-1],[$this->getFila()+2,$this->getColumna()+1]];

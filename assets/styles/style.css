@@ -5,11 +5,11 @@
 }
 
 body {
-    /*background-color: lightskyblue;*/
     overflow: hidden;
     height: 100vh;
     width: 100vw;
     font-family: sans-serif;
+    background-color: #f5f5f5;
 }
 
 header {
@@ -38,9 +38,74 @@ main {
         border: 5px solid black;
         background-color: darkkhaki;
         padding: 1%;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        
+        & span {
+            text-decoration: underline;
+            font-size: 2.15;
+            &.blanca {
+                color: #f5f5f5;
+            }
+        }
         & > h2 {
             text-align: center;
             font-size: 2em;
+            
+        }
+
+        & > div.piezasMuertas {
+            width: 100%;
+            height: 50%;
+            border: 5px solid black;
+            border-collapse: collapse;
+            margin: auto 0;
+
+            & > h2 {
+                text-align: center;
+                font-size: 2em;
+                padding: 1%;
+                height: 12.5%;
+            }
+
+            & > div {
+                display: inline-block;
+                width: 50%;
+                height: 87.5%;
+                border-top: 5px solid black;
+
+                & > h2 {
+                    border-bottom: 5px solid black;
+                    padding: 1%;
+                    text-align: center;
+                }
+
+                &.blanca {
+                    border-right: 5px solid black;
+                    background-color: #474747;
+                }
+
+                &.negra {
+                    background-color: #f5f5f5;
+                }
+            }
+        }
+
+        & > form {
+            margin-top: auto;
+            width: 40%;
+            height: 7.5%;
+            & > button {
+                font-size: 1.5em;
+                width: 100%;
+                height: 100%;
+                background-color: rgb(92, 87, 21);
+                border: 2px solid black;
+                border-radius: 10px;
+                color: #f5f5f5;
+                cursor: pointer;
+            }
         }
     }
 }
@@ -48,14 +113,14 @@ main {
 footer {
     height: 2.5%;
     position: fixed;
-    left: 0;
-    bottom: 0;
     width: 100%;
     text-align: center;
+    bottom: 0;
 }
 
 table {
     height: 100%;
+    width: 100%;
     aspect-ratio: 1/1;
     border: 5px solid black;
     border-collapse: collapse;
@@ -63,8 +128,6 @@ table {
         width: 100%;
         height: 100%;
         & > tr {
-            height: 5%;
-            width: 100%;
             & > td {
                 position: relative;
                 aspect-ratio: 1/1;
@@ -73,7 +136,7 @@ table {
                 text-align: center;
                 
                 & > i {                    
-                    font-size: 2em;
+                    font-size: 2vw;
                     position: relative;
                     z-index: 2;
                 }

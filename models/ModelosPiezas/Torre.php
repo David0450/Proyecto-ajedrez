@@ -1,5 +1,4 @@
 <?php
-require_once("./models/ModeloPieza.php");
 class Torre extends Pieza {
     public function movimiento() {
 

@@ -1,13 +1,5 @@
 <?php
 
-require_once("./models/ModelosPiezas/ModeloAlfil.php");
-require_once("./models/ModelosPiezas/ModeloCaballo.php");
-require_once("./models/ModelosPiezas/ModeloRey.php");
-require_once("./models/ModelosPiezas/ModeloReina.php");
-require_once("./models/ModelosPiezas/ModeloPeon.php");
-require_once("./models/ModelosPiezas/ModeloTorre.php");
-require_once("./models/ModeloCasilla.php");
-
 class Tablero {
     public $casillas = [];
 
