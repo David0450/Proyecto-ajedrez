@@ -1,11 +1,9 @@
 <?php
 abstract class Pieza {
     protected int|null $fila;
-
     protected int|null $columna;
     protected string $color;
-
-    private bool $estado;
+    public string $tipo;
 
     public function __construct($color, $fila, $columna) {
         $this->color = $color;

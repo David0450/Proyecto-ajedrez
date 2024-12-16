@@ -3,34 +3,76 @@
 class Juego {
     private $turno = 1;
     private $tablero;
-    private $jugadores;
+    public $jugadores;
+    private $piezas;
     public function __construct() {
+        $this->piezas = $this->generarPiezas();
         $this->tablero = new Tablero();
         $this->jugadores = [
             "blanca" => new Jugador("blanca"),
             "negra" => new Jugador("negra")
         ];
-        $this->asociarPiezas();
+        $this->setPiezasEnTablero();
+        $this->asociarPiezasJugadores();
     }
 
     public function mostrarTablero() {
         return $this->tablero;
     }
 
-    public function asociarPiezas() {
-        for($i = 0; $i < 2; $i++) {
-            foreach($this->tablero->casillas[$i] as $casilla) {
-                $piezasNegras[] = $casilla->getContenido();
-            }
-        }
-        for($i = 6; $i < 8; $i++) {
-            foreach($this->tablero->casillas[$i] as $casilla) {
-                $piezasBlancas[] = $casilla->getContenido();
-            }
-        }
+    private function generarPiezas() {
+        $piezas = [
+            "blancas" => [
+                new Torre("blanca",7,0),
+                new Caballo("blanca",7,1),
+                new Alfil("blanca",7,2),
+                new Reina("blanca",7,3),
+                new Rey("blanca",7,4),
+                new Alfil("blanca",7,5),
+                new Caballo("blanca",7,6),
+                new Torre("blanca",7,7),
+                new Peon("blanca",6,0),
+                new Peon("blanca",6,1),
+                new Peon("blanca",6,2),
+                new Peon("blanca",6,3),
+                new Peon("blanca",6,4),
+                new Peon("blanca",6,5),
+                new Peon("blanca",6,6),
+                new Peon("blanca",6,7),
+            ],
+            "negras" => [
+                new Torre("negra",0,0),
+                new Caballo("negra",0,1),
+                new Alfil("negra",0,2),
+                new Reina("negra",0,3),
+                new Rey("negra",0,4),
+                new Alfil("negra",0,5),
+                new Caballo("negra",0,6),
+                new Torre("negra",0,7),
+                new Peon("negra",1,0),
+                new Peon("negra",1,1),
+                new Peon("negra",1,2),
+                new Peon("negra",1,3),
+                new Peon("negra",1,4),
+                new Peon("negra",1,5),
+                new Peon("negra",1,6),
+                new Peon("negra",1,7),  
+            ]
+        ];
+        return $piezas; 
+    }
 
-        $this->jugadores["blanca"]->setFichasVivas($piezasBlancas);
-        $this->jugadores["negra"]->setFichasVivas($piezasNegras);
+    public function asociarPiezasJugadores() {
+        $this->jugadores["blanca"]->setFichasVivas($this->piezas["blancas"]);
+        $this->jugadores["negra"]->setFichasVivas($this->piezas["negras"]);
+    }
+
+    public function setPiezasEnTablero() {
+        foreach($this->piezas as $piezasColor) {
+            foreach($piezasColor as $pieza) {
+                $this->tablero->setPiezaEnCasilla($pieza, $pieza->getCoordenadas());
+            }
+        }
     }
 
     public function getTurno() {
@@ -51,7 +93,18 @@ class Juego {
 
     public function seleccionarFicha() {
         $this->limpiarBotones();
-        foreach($this->tablero->casillas as $fila) {
+        if ($this->turno == 1) {
+            $color = "blancas";
+        } elseif ($this->turno == 2) {
+            $color = "negras";
+        }
+
+        foreach($this->piezas[$color] as $piezas) {
+            $this->tablero->casillas[$piezas->getFila()][$piezas->getColumna()]->setBoton("<button type='submit' class='seleccionarFicha' name='seleccionarFicha' value='".$piezas->getCoordenadas()."'>");
+        }
+
+
+        /*foreach($this->tablero->casillas as $fila) {
             foreach($fila as $casilla) {
                 if ($this->turno == 1) {
                     if(is_object($casilla->getContenido()) && $casilla->getContenido()->getColor() == "blanca") {
@@ -63,47 +116,77 @@ class Juego {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public function mostrarMovimientos($coordenadas) {
         $this->limpiarBotones();
+
         $casilla = $this->tablero->getCasilla($coordenadas);
-        $ficha = $casilla->getContenido();
-        //$ficha = $this->tablero->casillas[$coordenadas[0]][$coordenadas[1]]->getContenido();
-        $casillasMovibles = $ficha->movimiento();
+        $pieza = $casilla->getContenido();
+        $casillasMovibles = $pieza->movimiento();
         foreach($casillasMovibles as $coordenadasCasilla) {
             $casilla = $this->tablero->getCasilla($coordenadasCasilla) ?? null;
-            //$casilla = $this->tablero->casillas[$coordenadasCasilla[0]][$coordenadasCasilla[1]] ?? '';
+
             if (is_object($casilla)) {
                 if(is_object($casilla->getContenido())) {
-                    if($casilla->getContenido()->getColor() != $ficha->getColor()) {
-                        $casilla->setBoton("<button type='submit' class='matar' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
+                    if($casilla->getContenido()->getColor() != $pieza->getColor()) {
+                        $casilla->setBoton("<button type='submit' class='matar' name='matarFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                     }
                 } else {
-                    $casilla->setMovible(true);
-                    $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$ficha->getCoordenadas()."'>");
+                    $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                 }
             }
         }
     }
+
+    private function validarMovimientos($casillaDestino, $pieza) {
+        if (is_object($casillaDestino)) {
+            if($casillaDestino->getContenido()->getColor() == $pieza->getColor()) {
+                return false;
+            } elseif($casillaDestino->getContenido()->getColor() != $pieza->getColor()) {
+
+            } else {
+
+            }
+        } else {
+            return false;
+        }
+    }
  
-    public function moverFicha($casilla, $ficha) {
+    public function moverFicha($casilla, $coordenadasFicha) {
         $this->limpiarBotones();
+        
         if ($this->turno == 1) {
             $jugadorActual = $this->jugadores['blanca'];
         } elseif ($this->turno == 2) {
             $jugadorActual = $this->jugadores['negra'];
         }
-        $jugadorActual->moverFicha($casilla, $ficha);
 
+        $ficha = $jugadorActual->getFicha($coordenadasFicha);
+        $this->tablero->casillas[$ficha->getFila()][$ficha->getColumna()]->setContenido("");
+        $jugadorActual->moverFicha($casilla, $coordenadasFicha);
+        $this->setPiezasEnTablero();
 
-        /*$pieza = $this->tablero->casillas[$ficha[0]][$ficha[1]]->getContenido();
-        $pieza->setFila($casilla[0]);
-        $pieza->setColumna($casilla[1]);
-        $this->tablero->casillas[$casilla[0]][$casilla[1]]->setContenido($pieza);
-        $this->tablero->casillas[$ficha[0]][$ficha[1]]->setContenido("");
-        $this->pasarTurno();*/
+        $this->pasarTurno();
+    }
+
+    public function matarFicha($coordenadasFichaMatar, $coordenadasFichaActual) {
+        if ($this->turno == 1) {
+            $jugadorActual = $this->jugadores['blanca'];
+            $jugadorRival = $this->jugadores['negra'];
+        } elseif ($this->turno == 2) {
+            $jugadorActual = $this->jugadores['negra'];
+            $jugadorRival = $this->jugadores['blanca'];
+        }  
+
+        $fichaMuerta = $jugadorRival->getFicha($coordenadasFichaMatar);
+        $fichaMuerta->setFila(null);
+        $fichaMuerta->setColumna(null);
+
+        unset($jugadorRival->piezasVivas[array_search($fichaMuerta,$jugadorRival->getFichasVivas())]);
+        $jugadorRival->piezasMuertas[] = $fichaMuerta;
+        print_r($jugadorRival->piezasMuertas);
     }
 
     public function limpiarBotones() {

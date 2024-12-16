@@ -45,6 +45,8 @@
             } elseif (isset($_GET["moverFicha"]) && !isset($_GET["seleccionarFicha"])) {
                 $juego->moverFicha($_GET["moverFicha"][0].$_GET["moverFicha"][1] , $_GET["moverFicha"][3].$_GET["moverFicha"][4]);
                 $juego->seleccionarFicha();
+            } elseif(isset($_GET["matarFicha"])) {
+                $juego->matarFicha($_GET["matarFicha"][0].$_GET["matarFicha"][1] , $_GET["matarFicha"][3].$_GET["matarFicha"][4]);
             } else {
                 $juego->seleccionarFicha();
             }
@@ -52,7 +54,7 @@
         }else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unset($_SESSION["juego"]);
             header("Location: .");
-        } else if (!isset($_SERVER["REQUEST_METHOD"])) {
+        } else {
             unset($_SESSION["juego"]);
         }
         ?>
@@ -68,6 +70,7 @@
                 </div><!--
                 --><div class="negra">
                     <h2><span class="negra">Negras</span></h2>
+                    <?= $juego->jugadores['negra']->mostrarMuertas();?>
                 </div>
             </div>
             <form action="#" method="post">

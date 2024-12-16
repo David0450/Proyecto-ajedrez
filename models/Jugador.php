@@ -2,8 +2,8 @@
 
 class Jugador {
     private string $color;
-    private array $piezasVivas = [];
-    private array $piezasMuertas = [];
+    public array $piezasVivas = [];
+    public array $piezasMuertas = [];
 
     public function __construct($color) {
         $this->color = $color;
@@ -28,5 +28,16 @@ class Jugador {
             }
         }
         return false;
+    }
+
+    public function matarFicha($ficha) {
+        unset($this->piezasVivas[array_search($ficha,$this->piezasVivas)]);
+        $this->piezasMuertas[] = $ficha;
+    }
+
+    public function mostrarMuertas() {
+        foreach($this->piezasMuertas as $pieza) {
+            return $pieza;
+        }
     }
 }

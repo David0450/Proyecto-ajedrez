@@ -1,5 +1,7 @@
 <?php
 class Torre extends Pieza {
+    public string $tipo = "Torre";
+
     public function movimiento() {
 
     }

@@ -1,5 +1,7 @@
 <?php
 class Rey extends Pieza {
+    public string $tipo = "Rey";
+
     public function movimiento() {
         
     }

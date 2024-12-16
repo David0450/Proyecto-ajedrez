@@ -1,5 +1,7 @@
 <?php
 class Alfil extends Pieza {
+    public string $tipo = "Alfil";
+
     public function movimiento() {
     }
 

@@ -1,5 +1,8 @@
 <?php
 class Peon extends Pieza {
+    public string $tipo = "Peon";
+
+
     public function movimiento() {
         $casillas = [];
         if ($this->getColor() == "blanca") {

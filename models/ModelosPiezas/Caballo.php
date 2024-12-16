@@ -1,5 +1,7 @@
 <?php
 class Caballo extends Pieza {
+    public string $tipo = "Caballo";
+
     public function movimiento() {
         return [
             ($this->getFila()-1).$this->getColumna()-2,
