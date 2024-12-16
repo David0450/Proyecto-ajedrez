@@ -2,7 +2,38 @@
 class Alfil extends Pieza {
     public string $tipo = "Alfil";
 
-    public function movimiento() {
+    public function movimiento($tablero) {
+        $fila = $this->fila;
+        $columna = $this->columna;
+        $casillas = [];
+
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $fila++;
+            $columna++;
+        }
+        $columna = $this->columna;
+        $fila = $this->fila;
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $fila++;
+            $columna--;
+        }
+        $columna = $this->columna;
+        $fila = $this->fila;
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $fila--;
+            $columna--;
+        }
+        $columna = $this->columna;
+        $fila = $this->fila;
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $fila--;
+            $columna++;
+        }
+        return $casillas;
     }
 
     public function __toString()

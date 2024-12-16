@@ -3,7 +3,7 @@ class Peon extends Pieza {
     public string $tipo = "Peon";
 
 
-    public function movimiento() {
+    public function movimiento($tablero) {
         $casillas = [];
         if ($this->getColor() == "blanca") {
             if ($this->getFila() == 6) {

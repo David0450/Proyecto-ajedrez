@@ -37,7 +37,7 @@ class Jugador {
 
     public function mostrarMuertas() {
         foreach($this->piezasMuertas as $pieza) {
-            return $pieza;
+            echo $pieza;
         }
     }
 }

@@ -70,7 +70,9 @@ class Juego {
     public function setPiezasEnTablero() {
         foreach($this->piezas as $piezasColor) {
             foreach($piezasColor as $pieza) {
-                $this->tablero->setPiezaEnCasilla($pieza, $pieza->getCoordenadas());
+                if(is_int($pieza->getColumna())) {
+                    $this->tablero->setPiezaEnCasilla($pieza, $pieza->getCoordenadas());
+                }
             }
         }
     }
@@ -100,23 +102,10 @@ class Juego {
         }
 
         foreach($this->piezas[$color] as $piezas) {
-            $this->tablero->casillas[$piezas->getFila()][$piezas->getColumna()]->setBoton("<button type='submit' class='seleccionarFicha' name='seleccionarFicha' value='".$piezas->getCoordenadas()."'>");
-        }
-
-
-        /*foreach($this->tablero->casillas as $fila) {
-            foreach($fila as $casilla) {
-                if ($this->turno == 1) {
-                    if(is_object($casilla->getContenido()) && $casilla->getContenido()->getColor() == "blanca") {
-                        $casilla->setBoton("<button type='submit' class='seleccionarFicha' name='seleccionarFicha' value='".$casilla->getCoordenadas()."'>");
-                    }   
-                } elseif ($this->turno == 2) {
-                    if(is_object($casilla->getContenido()) && $casilla->getContenido()->getColor() == "negra") {
-                        $casilla->setBoton("<button type='submit' class='seleccionarFicha' name='seleccionarFicha' value='".$casilla->getCoordenadas()."'>");
-                    }
-                }
+            if(is_int($piezas->getFila())) {
+                $this->tablero->casillas[$piezas->getFila()][$piezas->getColumna()]->setBoton("<button type='submit' class='seleccionarFicha' name='seleccionarFicha' value='".$piezas->getCoordenadas()."'>");
             }
-        }*/
+        }
     }
 
     public function mostrarMovimientos($coordenadas) {
@@ -124,7 +113,7 @@ class Juego {
 
         $casilla = $this->tablero->getCasilla($coordenadas);
         $pieza = $casilla->getContenido();
-        $casillasMovibles = $pieza->movimiento();
+        $casillasMovibles = $pieza->movimiento($this->tablero);
         foreach($casillasMovibles as $coordenadasCasilla) {
             $casilla = $this->tablero->getCasilla($coordenadasCasilla) ?? null;
 
@@ -173,20 +162,16 @@ class Juego {
 
     public function matarFicha($coordenadasFichaMatar, $coordenadasFichaActual) {
         if ($this->turno == 1) {
-            $jugadorActual = $this->jugadores['blanca'];
             $jugadorRival = $this->jugadores['negra'];
         } elseif ($this->turno == 2) {
-            $jugadorActual = $this->jugadores['negra'];
             $jugadorRival = $this->jugadores['blanca'];
         }  
-
         $fichaMuerta = $jugadorRival->getFicha($coordenadasFichaMatar);
-        $fichaMuerta->setFila(null);
-        $fichaMuerta->setColumna(null);
-
         unset($jugadorRival->piezasVivas[array_search($fichaMuerta,$jugadorRival->getFichasVivas())]);
         $jugadorRival->piezasMuertas[] = $fichaMuerta;
-        print_r($jugadorRival->piezasMuertas);
+        $fichaMuerta->setFila(null);
+        $fichaMuerta->setColumna(null);
+        $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
     }
 
     public function limpiarBotones() {

@@ -2,8 +2,17 @@
 class Rey extends Pieza {
     public string $tipo = "Rey";
 
-    public function movimiento() {
-        
+    public function movimiento($tablero) {
+        return [
+            ($this->getFila()-1).$this->getColumna(),
+            ($this->getFila()+1).$this->getColumna(),
+            ($this->getFila()).$this->getColumna()+1,
+            ($this->getFila()).$this->getColumna()-1,
+            ($this->getFila()-1).$this->getColumna()-1,
+            ($this->getFila()-1).$this->getColumna()+1,
+            ($this->getFila()+1).$this->getColumna()-1,
+            ($this->getFila()+1).$this->getColumna()+1
+        ];
     }
 
     public function __toString() {

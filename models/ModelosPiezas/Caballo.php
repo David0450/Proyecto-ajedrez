@@ -2,7 +2,7 @@
 class Caballo extends Pieza {
     public string $tipo = "Caballo";
 
-    public function movimiento() {
+    public function movimiento($tablero) {
         return [
             ($this->getFila()-1).$this->getColumna()-2,
             ($this->getFila()+1).$this->getColumna()-2,

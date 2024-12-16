@@ -47,6 +47,7 @@
                 $juego->seleccionarFicha();
             } elseif(isset($_GET["matarFicha"])) {
                 $juego->matarFicha($_GET["matarFicha"][0].$_GET["matarFicha"][1] , $_GET["matarFicha"][3].$_GET["matarFicha"][4]);
+                $juego->seleccionarFicha();
             } else {
                 $juego->seleccionarFicha();
             }
@@ -67,6 +68,7 @@
                 <h2>Piezas fuera de juego</h2>
                 <div class="blanca">
                     <h2><span class="blanca">Blancas</span></h2>
+                    <?= $juego->jugadores['blanca']->mostrarMuertas();?>
                 </div><!--
                 --><div class="negra">
                     <h2><span class="negra">Negras</span></h2>

@@ -40,5 +40,5 @@ abstract class Pieza {
         $this->columna = $coordenadas[1];
     }
 
-    abstract public function movimiento();
+    abstract public function movimiento($tablero);
 }
