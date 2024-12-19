@@ -63,7 +63,8 @@
             <?= $juego->mostrarTablero();?>
         </form>
         <div class="info">
-            <h2>Juegan <?=$juego->getTurno() == 1 ? "<span class='blanca'>Blancas</span>" : "<span class='negra'>Negras</span>" ?></h2>
+            <h2>Juegan <?= $juego->getTurno() % 2 !== 0 ? "<span class='blanca'>Blancas</span>" : "<span class='negra'>Negras</span>" ?></h2>
+            <h3>Turno <?= $juego->getTurno() ?></h3>
             <div class="piezasMuertas">
                 <h2>Piezas fuera de juego</h2>
                 <div class="blanca">

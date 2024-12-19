@@ -90,14 +90,14 @@ class Juego {
     }
 
     public function pasarTurno() {
-        $this->turno = ($this->turno % 2) + 1;
+        $this->turno++;
     }
 
     public function seleccionarFicha() {
         $this->limpiarBotones();
-        if ($this->turno == 1) {
+        if ($this->turno % 2 !== 0) {
             $color = "blancas";
-        } elseif ($this->turno == 2) {
+        } elseif ($this->turno % 2 === 0) {
             $color = "negras";
         }
 
@@ -146,9 +146,9 @@ class Juego {
     public function moverFicha($casilla, $coordenadasFicha) {
         $this->limpiarBotones();
         
-        if ($this->turno == 1) {
+        if ($this->turno % 2 !== 0) {
             $jugadorActual = $this->jugadores['blanca'];
-        } elseif ($this->turno == 2) {
+        } elseif ($this->turno % 2 === 0) {
             $jugadorActual = $this->jugadores['negra'];
         }
 
@@ -161,9 +161,9 @@ class Juego {
     }
 
     public function matarFicha($coordenadasFichaMatar, $coordenadasFichaActual) {
-        if ($this->turno == 1) {
+        if ($this->turno % 2 !== 0) {
             $jugadorRival = $this->jugadores['negra'];
-        } elseif ($this->turno == 2) {
+        } elseif ($this->turno % 2 === 0) {
             $jugadorRival = $this->jugadores['blanca'];
         }  
         $fichaMuerta = $jugadorRival->getFicha($coordenadasFichaMatar);
