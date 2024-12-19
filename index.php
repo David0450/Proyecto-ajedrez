@@ -44,23 +44,23 @@
                 $juego->mostrarMovimientos($_GET["seleccionarFicha"]);
             } elseif (isset($_GET["moverFicha"]) && !isset($_GET["seleccionarFicha"])) {
                 $juego->moverFicha($_GET["moverFicha"][0].$_GET["moverFicha"][1] , $_GET["moverFicha"][3].$_GET["moverFicha"][4]);
+                $juego->pasarTurno();
                 $juego->seleccionarFicha();
             } elseif(isset($_GET["matarFicha"])) {
                 $juego->matarFicha($_GET["matarFicha"][0].$_GET["matarFicha"][1] , $_GET["matarFicha"][3].$_GET["matarFicha"][4]);
+                $juego->pasarTurno();
                 $juego->seleccionarFicha();
             } else {
                 $juego->seleccionarFicha();
             }
             $_SESSION['juego'] = serialize($juego);
-        }else if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            unset($_SESSION["juego"]);
-            header("Location: .");
         } else {
             unset($_SESSION["juego"]);
+            header("Location: .");
         }
         ?>
         <form action="#" method="get">
-            <?= $juego->mostrarTablero();?>
+            <?= $juego->getTablero();?>
         </form>
         <div class="info">
             <h2>Juegan <?= $juego->getTurno() % 2 !== 0 ? "<span class='blanca'>Blancas</span>" : "<span class='negra'>Negras</span>" ?></h2>
@@ -69,11 +69,39 @@
                 <h2>Piezas fuera de juego</h2>
                 <div class="blanca">
                     <h2><span class="blanca">Blancas</span></h2>
-                    <?= $juego->jugadores['blanca']->mostrarMuertas();?>
+                    <div class="peonesBlancosMuertos">
+                        <?= $juego->jugadores['blanca']->mostrarMuertas('Peon');?>
+                    </div>
+                    <div class="caballosBlancosMuertos">
+                        <?= $juego->jugadores['blanca']->mostrarMuertas('Caballo');?>
+                    </div>
+                    <div class="alfilesBlancosMuertos">
+                        <?= $juego->jugadores['blanca']->mostrarMuertas('Alfil');?>
+                    </div>
+                    <div class="torresBlancosMuertos">
+                        <?= $juego->jugadores['blanca']->mostrarMuertas('Torre');?>
+                    </div>
+                    <div class="reinasBlancosMuertos">
+                        <?= $juego->jugadores['blanca']->mostrarMuertas('Reina');?>
+                    </div>
                 </div><!--
                 --><div class="negra">
                     <h2><span class="negra">Negras</span></h2>
-                    <?= $juego->jugadores['negra']->mostrarMuertas();?>
+                    <div class="peonesNegrosMuertos">
+                        <?= $juego->jugadores['negra']->mostrarMuertas('Peon');?>
+                    </div>
+                    <div class="caballosNegrosMuertos">
+                        <?= $juego->jugadores['negra']->mostrarMuertas('Caballo');?>
+                    </div>
+                    <div class="alfilesNegrosMuertos">
+                        <?= $juego->jugadores['negra']->mostrarMuertas('Alfil');?>
+                    </div>
+                    <div class="torresNegrosMuertos">
+                        <?= $juego->jugadores['negra']->mostrarMuertas('Torre');?>
+                    </div>
+                    <div class="reinasNegrosMuertos">
+                        <?= $juego->jugadores['negra']->mostrarMuertas('Reina');?>
+                    </div>
                 </div>
             </div>
             <form action="#" method="post">

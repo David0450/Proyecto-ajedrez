@@ -35,9 +35,17 @@ class Jugador {
         $this->piezasMuertas[] = $ficha;
     }
 
-    public function mostrarMuertas() {
-        foreach($this->piezasMuertas as $pieza) {
-            echo $pieza;
+    public function mostrarMuertas($tipo = null) {
+        if ($tipo == null) {
+            foreach($this->piezasMuertas as $pieza) {
+                echo $pieza;
+            }
+        } else {
+            foreach($this->piezasMuertas as $pieza) {
+                if ($pieza->getTipo() == $tipo) {
+                    echo $pieza;
+                }
+            }
         }
     }
 }

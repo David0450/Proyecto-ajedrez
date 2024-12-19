@@ -27,6 +27,10 @@ abstract class Pieza {
         return $this->fila.$this->columna;
     }
 
+    public function getTipo() {
+        return $this->tipo;
+    }
+
     public function setFila($fila) {
         $this->fila = $fila;
     }

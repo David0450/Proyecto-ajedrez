@@ -6,32 +6,28 @@ class Torre extends Pieza {
         $fila = $this->fila;
         $columna = $this->columna;
         $casillas = [];
+
         while($tablero->getCasilla($fila.$columna) != false) {
-            if ($tablero->getCasilla($fila.$columna)->getContenido() == null) {
-                $casillas[] = ($fila.$columna);
-                $fila++;
-            }
-        }
-        $fila = $this->fila;
-        while($tablero->getCasilla($fila.$columna) != false) {
-            if ($tablero->getCasilla($fila.$columna)->getContenido() == null) {
-                $casillas[] = ($fila.$columna);
-                $fila--;
-            }
-        }
-        $fila = $this->fila;
-        while($tablero->getCasilla($fila.$columna) != false) {
-            if ($tablero->getCasilla($fila.$columna)->getContenido() == null) {
-                $casillas[] = ($fila.$columna);
-                $columna++;
-            }
+            $casillas[] = ($fila.$columna);
+            $fila++;
         }
         $columna = $this->columna;
+        $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
-            if ($tablero->getCasilla($fila.$columna)->getContenido() == null) {
-                $casillas[] = ($fila.$columna);
-                $columna--;
-            }
+            $casillas[] = ($fila.$columna);
+            $fila--;
+        }
+        $columna = $this->columna;
+        $fila = $this->fila;
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $columna++;
+        }
+        $columna = $this->columna;
+        $fila = $this->fila;
+        while($tablero->getCasilla($fila.$columna) != false) {
+            $casillas[] = ($fila.$columna);
+            $columna--;
         }
         return $casillas;
     }

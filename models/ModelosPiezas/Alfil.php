@@ -8,30 +8,30 @@ class Alfil extends Pieza {
         $casillas = [];
 
         while($tablero->getCasilla($fila.$columna) != false) {
-            $casillas[] = ($fila.$columna);
             $fila++;
             $columna++;
+            $casillas[] = ($fila.$columna);
         }
         $columna = $this->columna;
         $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
-            $casillas[] = ($fila.$columna);
             $fila++;
             $columna--;
+            $casillas[] = ($fila.$columna);
         }
         $columna = $this->columna;
         $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
-            $casillas[] = ($fila.$columna);
             $fila--;
             $columna--;
+            $casillas[] = ($fila.$columna);
         }
         $columna = $this->columna;
         $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
-            $casillas[] = ($fila.$columna);
             $fila--;
             $columna++;
+            $casillas[] = ($fila.$columna);
         }
         return $casillas;
     }
