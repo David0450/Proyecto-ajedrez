@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Clase Juego - Representa una partida de ajedrez
+ * Gestiona el tablero, los jugadores, las piezas y la lógica del juego
+ */
 class Juego {
     /** @var int Número de turno actual de la partida */
     private int $turno = 1;
@@ -223,7 +227,7 @@ class Juego {
         $fichaMuerta->setColumna(null);
         $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
     }
-    
+
     /**
      * Elimina todos los botones de acción del tablero
      * @return void

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Clase que representa una casilla en un tablero o cuadrícula
+ * Clase Casilla - Representa una casilla en un tablero
  * Cada casilla tiene una posición (fila, columna), contenido y estado de movimiento
  */
 class Casilla {
