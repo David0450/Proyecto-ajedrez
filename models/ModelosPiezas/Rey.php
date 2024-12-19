@@ -14,16 +14,29 @@ class Rey extends Pieza {
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
     public function movimiento($tablero) {
-        return [
-            ($this->getFila()-1).$this->getColumna(), // Arriba
-            ($this->getFila()+1).$this->getColumna(), // Abajo
-            ($this->getFila()).$this->getColumna()+1, // Derecha
-            ($this->getFila()).$this->getColumna()-1, // Izquierda
-            ($this->getFila()-1).$this->getColumna()-1, // Arriba izquierda
-            ($this->getFila()-1).$this->getColumna()+1, // Arriba derecha
-            ($this->getFila()+1).$this->getColumna()-1, // Abajo izquierda
-            ($this->getFila()+1).$this->getColumna()+1 // Abajo derecha
+        $casillas = [];
+        $casillasPosibles = [
+            "arriba" => ($this->getFila()-1).$this->getColumna(), // Arriba
+            "abajo" => ($this->getFila()+1).$this->getColumna(), // Abajo
+            "derecha" => ($this->getFila()).$this->getColumna()+1, // Derecha
+            "izquierda" => ($this->getFila()).$this->getColumna()-1, // Izquierda
+            "arribaIzquierda" => ($this->getFila()-1).$this->getColumna()-1, // Arriba izquierda
+            "arribaDerecha" => ($this->getFila()-1).$this->getColumna()+1, // Arriba derecha
+            "abajoIzquierda" => ($this->getFila()+1).$this->getColumna()-1, // Abajo izquierda
+            "abajoDerecha" => ($this->getFila()+1).$this->getColumna()+1 // Abajo derecha
         ];
+        foreach($casillasPosibles as $casilla) {
+            if ($tablero->getCasilla($casilla) !== false) {
+                if($tablero->getCasilla($casilla)->getContenido() === '') {
+                    // TODO: COMPROBAR JAQUE
+                } else {
+                    if($tablero->getCasilla($casilla)->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casilla;
+                    }
+                }
+            }
+        }
+        return $casillas;
     }
 
     /**

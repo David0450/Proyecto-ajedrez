@@ -65,7 +65,6 @@ class Juego {
     }
 
     /**
-
      * Genera todas las piezas iniciales del juego
      * Crea las 16 piezas de cada color en sus posiciones iniciales
      * @return array<Alfil|Caballo|Peon|Reina|Rey|Torre>[] Lista de objetos de las piezas de cada color
@@ -167,19 +166,20 @@ class Juego {
      * @return void
      */
     public function mostrarMovimientos($coordenadas) {
-        $this->limpiarBotones();
-
+        
         $casilla = $this->tablero->getCasilla($coordenadas);
         $pieza = $casilla->getContenido();
         $casillasMovibles = $pieza->movimiento($this->tablero);
+        if (count($casillasMovibles) === 0) {
+            return;
+        }
+        $this->limpiarBotones();
         foreach($casillasMovibles as $coordenadasCasilla) {
             $casilla = $this->tablero->getCasilla($coordenadasCasilla) ?? null;
 
             if (is_object($casilla)) {
                 if(is_object($casilla->getContenido())) {
-                    if($casilla->getContenido()->getColor() != $pieza->getColor()) {
-                        $casilla->setBoton("<button type='submit' class='matar' name='matarFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
-                    }
+                    $casilla->setBoton("<button type='submit' class='matar' name='matarFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                 } else {
                     $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                 }

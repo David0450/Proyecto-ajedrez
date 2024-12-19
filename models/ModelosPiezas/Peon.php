@@ -22,23 +22,70 @@ class Peon extends Pieza {
 
         // Movimientos para peones blancos (se mueven hacia arriba en el tablero)
         if ($this->getColor() == "blanca") {
+            $casillasPosibles = [
+                "diagonalIzquierda" => ($this->getFila()-1).($this->getColumna()-1),
+                "diagonalDerecha" => ($this->getFila()-1).($this->getColumna()+1),
+                "unaDelante" => ($this->getFila()-1).($this->getColumna()),
+                "dosDelante" => ($this->getFila()-2).($this->getColumna())
+            ];
             // Si está en la posición inicial (fila 6), puede moverse dos casillas
             if ($this->getFila() == 6) {
-                $casillas[] = ($this->getFila()-2).$this->getColumna();
+                $casillas[] = $casillasPosibles["dosDelante"];
             }
-            // Siempre puede moverse una casilla hacia adelante
-            $casillas[] = ($this->getFila()-1).$this->getColumna();
+            // Siempre que no tenga una pieza delante puede moverse una casilla
+            if ($tablero->getCasilla($this->getFila()+1 . $this->getColumna())->getContenido() === "") {
+                $casillas[] = $casillasPosibles["unaDelante"];
+            }
+            // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga
+            if($tablero->getCasilla($casillasPosibles["diagonalDerecha"]) !== false) {
+                if($tablero->getCasilla($casillasPosibles["diagonalDerecha"])->getContenido() !== "") {
+                    if($tablero->getCasilla($casillasPosibles["diagonalDerecha"])->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casillasPosibles["diagonalDerecha"];
+                    }
+                }
+            }
+
+            if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"]) !== false) {
+                if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"])->getContenido() !== "") {
+                    if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"])->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casillasPosibles["diagonalIzquierda"];
+                    }
+                }
+            }
         } 
         // Movimientos para peones negros (se mueven hacia abajo en el tablero)
         elseif ($this->getColor() == "negra") {
+            $casillasPosibles = [
+                "diagonalIzquierda" => ($this->getFila()+1).($this->getColumna()-1),
+                "diagonalDerecha" => ($this->getFila()+1).($this->getColumna()+1),
+                "unaDelante" => ($this->getFila()+1).($this->getColumna()),
+                "dosDelante" => ($this->getFila()+2).($this->getColumna())
+            ];
             // Si está en la posición inicial (fila 1), puede moverse dos casillas
             if ($this->getFila() == 1) {
-                $casillas[] = ($this->getFila()+2).$this->getColumna();
+                $casillas[] = $casillasPosibles["dosDelante"];
             }
-            // Siempre puede moverse una casilla hacia adelante
-            $casillas[] = ($this->getFila()+1).$this->getColumna();
-        }
+            // Siempre que no tenga una pieza delante puede moverse una casilla
+            if ($tablero->getCasilla($this->getFila()+1 . $this->getColumna())->getContenido() === "") {
+                $casillas[] = $casillasPosibles["unaDelante"];
+            }
+            // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga
+            if($tablero->getCasilla($casillasPosibles["diagonalDerecha"]) !== false) {
+                if($tablero->getCasilla($casillasPosibles["diagonalDerecha"])->getContenido() !== "") {
+                    if($tablero->getCasilla($casillasPosibles["diagonalDerecha"])->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casillasPosibles["diagonalDerecha"];
+                    }
+                }
+            }
 
+            if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"]) !== false) {
+                if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"])->getContenido() !== "") {
+                    if($tablero->getCasilla($casillasPosibles["diagonalIzquierda"])->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casillasPosibles["diagonalIzquierda"];
+                    }
+                }
+            }
+        }
         return $casillas;
     }
 

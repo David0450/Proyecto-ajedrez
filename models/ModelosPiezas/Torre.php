@@ -14,36 +14,72 @@ class Torre extends Pieza {
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
     public function movimiento($tablero) {
-        $fila = $this->fila;
-        $columna = $this->columna;
         $casillas = [];
-
+        
         // Movimiento perpendicular inferior
+        $fila = $this->fila + 1;
+        $columna = $this->columna;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila++;
+                    break;
+                }
+            }
             $casillas[] = ($fila.$columna);
             $fila++;
         }
 
         // Movimiento perpendicular superior
         $columna = $this->columna;
-        $fila = $this->fila;
+        $fila = $this->fila - 1;
         while($tablero->getCasilla($fila.$columna) != false) {
-            $casillas[] = ($fila.$columna);
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila--;
+                    break;
+                }
+            }
+            $casillas[] = $fila.$columna;
             $fila--;
         }
 
         // Movimiento perpendicular derecha
-        $columna = $this->columna;
+        $columna = $this->columna + 1;
         $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $columna++;
+                    break;
+                }
+            }
             $casillas[] = ($fila.$columna);
             $columna++;
         }
 
         // Movimiento perpendicular izquierda
-        $columna = $this->columna;
+        $columna = $this->columna - 1;
         $fila = $this->fila;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $columna--;
+                    break;
+                }
+            }
             $casillas[] = ($fila.$columna);
             $columna--;
         }

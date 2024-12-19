@@ -16,23 +16,29 @@ class Caballo extends Pieza {
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
     public function movimiento($tablero) {
-        return [
-            // Movimientos hacia la izquierda (2 casillas) + arriba/abajo (1 casilla)
-            ($this->getFila()-1).$this->getColumna()-2,  // Arriba-izquierda
-            ($this->getFila()+1).$this->getColumna()-2,  // Abajo-izquierda
-            
-            // Movimientos hacia la derecha (2 casillas) + arriba/abajo (1 casilla)
-            ($this->getFila()-1).$this->getColumna()+2,  // Arriba-derecha
-            ($this->getFila()+1).$this->getColumna()+2,  // Abajo-derecha
-            
-            // Movimientos hacia arriba (2 casillas) + izquierda/derecha (1 casilla)
-            ($this->getFila()-2).$this->getColumna()-1,  // Arriba-izquierda
-            ($this->getFila()-2).$this->getColumna()+1,  // Arriba-derecha
-            
-            // Movimientos hacia abajo (2 casillas) + izquierda/derecha (1 casilla)
-            ($this->getFila()+2).$this->getColumna()-1,  // Abajo-izquierda
-            ($this->getFila()+2).$this->getColumna()+1   // Abajo-derecha
+        $casillas = [];
+        $casillasPosibles = [
+            "arribaIzquierda" => ($this->getFila()-2).($this->getColumna()-1),
+            "arribaDerecha" => ($this->getFila()-2).($this->getColumna()+1),
+            "abajoIzquierda" => ($this->getFila()+2).($this->getColumna()-1),
+            "abajoDerecha" => ($this->getFila()+2).($this->getColumna()+1),
+            "derechaArriba" => ($this->getFila()-1).($this->getColumna()+2),
+            "derechaAbajo" => ($this->getFila()+1).($this->getColumna()+2),
+            "izquierdaArriba" => ($this->getFila()-1).($this->getColumna()-2),
+            "izquierdaAbajo" => ($this->getFila()+1).($this->getColumna()-2)
         ];
+        foreach($casillasPosibles as $casilla) {
+            if ($tablero->getCasilla($casilla) !== false) {
+                if($tablero->getCasilla($casilla)->getContenido() === "") {
+                    $casillas[] = $casilla;
+                } else {
+                    if($tablero->getCasilla($casilla)->getContenido()->getColor() !== $this->color) {
+                        $casillas[] = $casilla;
+                    }
+                }
+            }
+        }
+        return $casillas;
     }
 
     /**

@@ -151,7 +151,7 @@ table {
                 height: 5%;
                 text-align: center;
                 
-                & > i {                    
+                & > i {      
                     font-size: 2vw;
                     position: relative;
                     z-index: 2;

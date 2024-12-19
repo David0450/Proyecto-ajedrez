@@ -14,42 +14,82 @@ class Alfil extends Pieza {
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
     public function movimiento($tablero) {
-        $fila = $this->fila;
-        $columna = $this->columna;
         $casillas = [];
-
+        
         // Movimiento diagonal inferior derecha
+        $columna = $this->columna + 1;
+        $fila = $this->fila + 1;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila++;
+                    $columna++;
+                    break;
+                }
+            }
+            $casillas[] = ($fila.$columna);
             $fila++;
             $columna++;
-            $casillas[] = ($fila.$columna);
         }
 
         // Movimiento diagonal inferior izquierda
-        $columna = $this->columna;
-        $fila = $this->fila;
+        $columna = $this->columna - 1;
+        $fila = $this->fila + 1;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila++;
+                    $columna--;
+                    break;
+                }
+            }
+            $casillas[] = ($fila.$columna);
             $fila++;
             $columna--;
-            $casillas[] = ($fila.$columna);
         }
 
         // Movimiento diagonal superior izquierda
-        $columna = $this->columna;
-        $fila = $this->fila;
+        $columna = $this->columna - 1;
+        $fila = $this->fila - 1;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila--;
+                    $columna--;
+                    break;
+                }
+            }
+            $casillas[] = ($fila.$columna);
             $fila--;
             $columna--;
-            $casillas[] = ($fila.$columna);
         }
 
         // Movimiento diagonal superior derecha
-        $columna = $this->columna;
-        $fila = $this->fila;
+        $columna = $this->columna + 1;
+        $fila = $this->fila - 1;
         while($tablero->getCasilla($fila.$columna) != false) {
+            if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
+                if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
+                    break;
+                } else {
+                    $casillas[] = ($fila.$columna);
+                    $fila--;
+                    $columna++;
+                    break;
+                }
+            }
+            $casillas[] = ($fila.$columna);
             $fila--;
             $columna++;
-            $casillas[] = ($fila.$columna);
         }
 
         return $casillas;
