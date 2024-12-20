@@ -166,14 +166,15 @@ class Juego {
      * @return void
      */
     public function mostrarMovimientos($coordenadas) {
-        
+        $this->seleccionarFicha();
         $casilla = $this->tablero->getCasilla($coordenadas);
         $pieza = $casilla->getContenido();
-        $casillasMovibles = $pieza->movimiento($this->tablero);
+        $color = $this->getTurno() % 2 === 0 ? 'negra' : 'blanca';
+        $casillasMovibles = $this->getMovimientosPosibles($color, $coordenadas);
+        //$casillasMovibles = $pieza->movimiento($this->tablero);
         if (count($casillasMovibles) === 0) {
             return;
         }
-        $this->limpiarBotones();
         foreach($casillasMovibles as $coordenadasCasilla) {
             $casilla = $this->tablero->getCasilla($coordenadasCasilla) ?? null;
 
@@ -228,6 +229,41 @@ class Juego {
         $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
     }
 
+    private function estaEnJaque() {
+        $jugadorActual = $this->turno % 2 === 0 ? 
+            $this->jugadores['negra'] : 
+            $this->jugadores['blanca'];
+        $jugadorRival = $this->turno % 2 === 0 ? 
+            $this->jugadores['blanca'] : 
+            $this->jugadores['negra'];
+
+        foreach($jugadorActual->getFichasVivas() as $pieza) {
+            if ($pieza->getTipo() === 'Rey') {
+                $rey = $pieza;
+                break;
+            }
+        };
+        foreach($jugadorRival->getFichasVivas() as $pieza) {
+            if (in_array($rey->getCoordenadas(),$pieza->movimiento($this->tablero))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getMovimientosPosibles($colorActual, $coordenadasPiezaSeleccionada) {
+        $copiaJuego = clone $this;
+        $movimientosPosibles = [];
+        $piezaSeleccionada = $copiaJuego->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
+        foreach($piezaSeleccionada->movimiento($copiaJuego->tablero, null) as $movimientoPieza) {
+            $copiaJuego->moverFicha($movimientoPieza,$piezaSeleccionada->getCoordenadas());
+            if ($copiaJuego->estaEnJaque() === false) {
+                $movimientosPosibles[] = $movimientoPieza;
+            }
+        }
+        return $movimientosPosibles;
+    }
+
     /**
      * Elimina todos los botones de acción del tablero
      * @return void
@@ -236,6 +272,19 @@ class Juego {
         foreach($this->tablero->casillas as $fila) {
             foreach ($fila as $casilla) {
                 $casilla->setBoton("");
+            }
+        }
+    }
+
+    public function __clone() {
+        $this->tablero = clone $this->tablero;
+        foreach($this->jugadores as $color => $jugador) {
+            $this->jugadores[$color] = clone $jugador;
+        }
+
+        foreach ($this->piezas as $color => $arrayPiezas) {
+            foreach ($arrayPiezas as $key => $pieza) {
+                $this->piezas[$color][$key] = clone $pieza;
             }
         }
     }

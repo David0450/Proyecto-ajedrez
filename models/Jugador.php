@@ -87,4 +87,13 @@ class Jugador {
             }
         }
     }
+
+    public function __clone() {
+        foreach ($this->piezasVivas as $key => $piezaViva) {
+            $this->piezasVivas[$key] = clone $piezaViva;
+        }
+        foreach ($this->piezasMuertas as $key => $piezaMuerta) {
+            $this->piezasMuertas[$key] = clone $piezaMuerta;
+        }
+    }
 }

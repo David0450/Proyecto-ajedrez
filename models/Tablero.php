@@ -65,4 +65,12 @@ class Tablero {
         $tabla .= "</table>";
         return $tabla;
     }
+
+    public function __clone() {
+        foreach ($this->casillas as $fila => $arrayColumna) {
+            foreach($arrayColumna as $columna => $casilla) {
+                $this->casillas[$fila][$columna] = clone $casilla;
+            }
+        }
+    }
 }

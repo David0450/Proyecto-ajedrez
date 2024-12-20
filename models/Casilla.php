@@ -119,4 +119,10 @@ class Casilla {
     {
         return "<td class='".$this->getMovible()."' id='casilla".$this->getCoordenadas()."'>".$this->contenido.$this->boton."</td>";
     }
+
+    public function __clone() {
+        if ($this->contenido !== '') {
+            $this->contenido = clone $this->contenido;
+        }
+    }
 }

@@ -17,7 +17,7 @@ class Peon extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero) {
+    public function movimiento($tablero, $movimientosRival = null) {
         $casillas = [];
 
         // Movimientos para peones blancos (se mueven hacia arriba en el tablero)
@@ -29,11 +29,11 @@ class Peon extends Pieza {
                 "dosDelante" => ($this->getFila()-2).($this->getColumna())
             ];
             // Si está en la posición inicial (fila 6), puede moverse dos casillas
-            if ($this->getFila() == 6) {
+            if ($this->getFila() == 6 && $tablero->getCasilla($casillasPosibles["dosDelante"])->getContenido() === '') {
                 $casillas[] = $casillasPosibles["dosDelante"];
             }
             // Siempre que no tenga una pieza delante puede moverse una casilla
-            if ($tablero->getCasilla($this->getFila()+1 . $this->getColumna())->getContenido() === "") {
+            if ($tablero->getCasilla($this->getFila()-1 . $this->getColumna())->getContenido() === "") {
                 $casillas[] = $casillasPosibles["unaDelante"];
             }
             // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga
@@ -62,11 +62,11 @@ class Peon extends Pieza {
                 "dosDelante" => ($this->getFila()+2).($this->getColumna())
             ];
             // Si está en la posición inicial (fila 1), puede moverse dos casillas
-            if ($this->getFila() == 1) {
+            if ($this->getFila() == 1 && $tablero->getCasilla($casillasPosibles["dosDelante"])->getContenido() === '') {
                 $casillas[] = $casillasPosibles["dosDelante"];
             }
             // Siempre que no tenga una pieza delante puede moverse una casilla
-            if ($tablero->getCasilla($this->getFila()+1 . $this->getColumna())->getContenido() === "") {
+            if ($tablero->getCasilla($casillasPosibles["unaDelante"])->getContenido() === "") {
                 $casillas[] = $casillasPosibles["unaDelante"];
             }
             // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga

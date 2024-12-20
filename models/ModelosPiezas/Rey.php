@@ -13,7 +13,7 @@ class Rey extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero) {
+    public function movimiento($tablero, $movimientosRival = null) {
         $casillas = [];
         $casillasPosibles = [
             "arriba" => ($this->getFila()-1).$this->getColumna(), // Arriba
@@ -28,7 +28,7 @@ class Rey extends Pieza {
         foreach($casillasPosibles as $casilla) {
             if ($tablero->getCasilla($casilla) !== false) {
                 if($tablero->getCasilla($casilla)->getContenido() === '') {
-                    // TODO: COMPROBAR JAQUE
+                    $casillas[] = $casilla;
                 } else {
                     if($tablero->getCasilla($casilla)->getContenido()->getColor() !== $this->color) {
                         $casillas[] = $casilla;

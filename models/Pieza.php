@@ -100,5 +100,5 @@ abstract class Pieza {
      * @param mixed $tablero Estado actual del tablero
      * @return array Array de movimientos válidos
      */
-    abstract public function movimiento($tablero);
+    abstract public function movimiento($tablero, $movimientosRival);
 }
