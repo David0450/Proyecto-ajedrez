@@ -229,38 +229,82 @@ class Juego {
         $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
     }
 
-    private function estaEnJaque() {
-        $jugadorActual = $this->turno % 2 === 0 ? 
-            $this->jugadores['negra'] : 
-            $this->jugadores['blanca'];
-        $jugadorRival = $this->turno % 2 === 0 ? 
-            $this->jugadores['blanca'] : 
-            $this->jugadores['negra'];
+    /**
+     * Verifica si el jugador actual está en jaque
+     * @param Juego $copiaJuego Una copia del estado actual del juego
+     * @return bool True si el jugador está en jaque, false en caso contrario
+     */
+    private function estaEnJaque($copiaJuego) {
+        $colorActual = $copiaJuego->turno % 2 === 0 ? 'negra' : 'blanca';
+        $colorRival = $copiaJuego->turno % 2 === 0 ? 'blanca' : 'negra';
 
-        foreach($jugadorActual->getFichasVivas() as $pieza) {
+        // Encuentra el rey del jugador actual
+        $reyActual = null;
+        foreach($copiaJuego->jugadores[$colorActual]->getFichasVivas() as $pieza) {
             if ($pieza->getTipo() === 'Rey') {
-                $rey = $pieza;
+                $reyActual = $pieza;
                 break;
             }
-        };
-        foreach($jugadorRival->getFichasVivas() as $pieza) {
-            if (in_array($rey->getCoordenadas(),$pieza->movimiento($this->tablero))) {
+        }
+
+        if (!$reyActual) {
+            return false;
+        }
+
+        // Verifica si alguna pieza del rival puede capturar al rey
+        foreach($copiaJuego->jugadores[$colorRival]->getFichasVivas() as $piezaRival) {
+            $movimientosPosibles = $piezaRival->movimiento($copiaJuego->tablero);
+            // Si el rey está en alguna de las casillas donde puede moverse una pieza rival, está en jaque
+            if (in_array($reyActual->getCoordenadas(), $movimientosPosibles)) {
                 return true;
             }
         }
+
         return false;
     }
 
-    private function getMovimientosPosibles($colorActual, $coordenadasPiezaSeleccionada) {
-        $copiaJuego = clone $this;
+    /**
+     * Obtiene todos los movimientos posibles para una pieza que no dejen al rey en jaque
+     * @param string $colorActual Color del jugador actual ('blanca' o 'negra')
+     * @param string $coordenadasPiezaSeleccionada Coordenadas de la pieza a mover
+     * @return array Lista de coordenadas donde la pieza puede moverse legalmente
+     */
+    public function getMovimientosPosibles($colorActual, $coordenadasPiezaSeleccionada) {
         $movimientosPosibles = [];
-        $piezaSeleccionada = $copiaJuego->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
-        foreach($piezaSeleccionada->movimiento($copiaJuego->tablero, null) as $movimientoPieza) {
-            $copiaJuego->moverFicha($movimientoPieza,$piezaSeleccionada->getCoordenadas());
-            if ($copiaJuego->estaEnJaque() === false) {
-                $movimientosPosibles[] = $movimientoPieza;
+        $piezaSeleccionada = $this->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
+        
+        // Obtiene todos los movimientos teóricos de la pieza
+        $movimientosTeoricos = $piezaSeleccionada->movimiento($this->tablero, null);
+        
+        // Para cada movimiento teórico, verifica si deja al rey en jaque
+        foreach($movimientosTeoricos as $movimiento) {
+            // Crea una copia profunda del estado actual del juego
+            $copiaJuego = clone $this;
+            $copiaPiezaSeleccionada = $copiaJuego->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
+            
+            // Realiza el movimiento en la copia
+            $casillaDestino = $copiaJuego->tablero->getCasilla($movimiento);
+            if ($casillaDestino->getContenido() !== "") {
+                // Si hay una pieza en el destino, simula una captura
+                $colorRival = $colorActual === 'blanca' ? 'negra' : 'blanca';
+                $jugadorRival = $copiaJuego->jugadores[$colorRival];
+                $piezaRival = $jugadorRival->getFicha($movimiento);
+                if ($piezaRival) {
+                    $jugadorRival->matarFicha($piezaRival);
+                }
+            }
+            
+            // Actualiza la posición de la pieza en la copia
+            $copiaJuego->tablero->casillas[$copiaPiezaSeleccionada->getFila()][$copiaPiezaSeleccionada->getColumna()]->setContenido("");
+            $copiaPiezaSeleccionada->setCoordenadas($movimiento);
+            $copiaJuego->tablero->setPiezaEnCasilla($copiaPiezaSeleccionada, $movimiento);
+            
+            // Si el movimiento no deja al rey en jaque, es legal
+            if (!$copiaJuego->estaEnJaque($copiaJuego)) {
+                $movimientosPosibles[] = $movimiento;
             }
         }
+        
         return $movimientosPosibles;
     }
 
