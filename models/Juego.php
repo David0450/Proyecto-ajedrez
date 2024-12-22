@@ -172,7 +172,6 @@ class Juego {
         $this->seleccionarFicha();
         $casilla = $this->tablero->getCasilla($coordenadas);
         $pieza = $casilla->getContenido();
-        $color = $this->jugadorActual->getColor();
         $casillasMovibles = $this->getMovimientosPosibles($coordenadas);
         //$casillasMovibles = $pieza->movimiento($this->tablero);
         if (count($casillasMovibles) === 0) {
@@ -183,7 +182,7 @@ class Juego {
 
             if (is_object($casilla)) {
                 if(is_object($casilla->getContenido())) {
-                    $casilla->setBoton("<button type='submit' class='matar' name='matarFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
+                    $casilla->setBoton("<button type='submit' class='matar' name='moverFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                 } else {
                     $casilla->setBoton("<button type='submit' class='movimiento' name='moverFicha' value='".$casilla->getCoordenadas()." ".$pieza->getCoordenadas()."'>");
                 }
@@ -199,6 +198,11 @@ class Juego {
      */
     public function moverFicha($casilla, $coordenadasFicha) {
         $this->limpiarBotones();
+
+        if ($this->tablero->getCasilla($casilla)->getContenido() !== '') {
+            $this->matarFicha($casilla);
+        }
+
 
         $ficha = $this->jugadorActual->getFicha($coordenadasFicha);
         if (in_array($ficha->getTipo(),['Rey','Torre'])) {
@@ -219,14 +223,13 @@ class Juego {
      * @param string $coordenadasFichaActual Coordenadas de la pieza que realiza la captura
      * @return void
      */
-    public function matarFicha($coordenadasFichaMatar, $coordenadasFichaActual) {
+    public function matarFicha($coordenadasFichaMatar) {
 
         $fichaMuerta = $this->jugadorRival->getFicha($coordenadasFichaMatar);
         unset($this->jugadorRival->piezasVivas[array_search($fichaMuerta,$this->jugadorRival->getFichasVivas())]);
         $this->jugadorRival->piezasMuertas[] = $fichaMuerta;
         $fichaMuerta->setFila(null);
         $fichaMuerta->setColumna(null);
-        $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
     }
 
     /**
@@ -265,7 +268,6 @@ class Juego {
 
     /**
      * Obtiene todos los movimientos posibles para una pieza que no dejen al rey en jaque
-     * @param string $colorActual Color del jugador actual ('blanca' o 'negra')
      * @param string $coordenadasPiezaSeleccionada Coordenadas de la pieza a mover
      * @return array Lista de coordenadas donde la pieza puede moverse legalmente
      */
@@ -273,19 +275,19 @@ class Juego {
         $movimientosPosibles = [];
         $piezaSeleccionada = $this->jugadorActual->getFicha($coordenadasPiezaSeleccionada);
         
-        // Obtiene todos los movimientos teóricos de la pieza
-        $movimientosTeoricos = $piezaSeleccionada->movimiento($this->tablero);
+        // Obtiene todos los movimientos posibles de la pieza
+        $movimientosTeoricosPosibles = $piezaSeleccionada->movimiento($this->tablero);
         
-        // Para cada movimiento teórico, verifica si deja al rey en jaque
-        foreach($movimientosTeoricos as $movimiento) {
-            // Crea una copia profunda del estado actual del juego
+        // Para cada movimiento de la pieza, verifica si deja al rey en jaque
+        foreach($movimientosTeoricosPosibles as $movimiento) {
+            // Crea una copia del juego
             $copiaJuego = clone $this;
             $copiaPiezaSeleccionada = $copiaJuego->jugadores[$this->jugadorActual->getColor()]->getFicha($coordenadasPiezaSeleccionada);
             
-            // Realiza el movimiento en la copia
+            // Realiza el movimiento en la copia del juego
             $casillaDestino = $copiaJuego->tablero->getCasilla($movimiento);
             if ($casillaDestino->getContenido() !== "") {
-                // Si hay una pieza en el destino, simula una captura
+                // Si hay una pieza en el la casilla de destino, simula una captura
                 $colorRival = $this->jugadorRival->getColor();
                 $jugadorRival = $copiaJuego->jugadores[$colorRival];
                 $piezaRival = $jugadorRival->getFicha($movimiento);
@@ -294,30 +296,45 @@ class Juego {
                 }
             }
             
-            // Actualiza la posición de la pieza en la copia
+            // Actualiza la posición de la pieza en la copia del juego
             $copiaJuego->tablero->casillas[$copiaPiezaSeleccionada->getFila()][$copiaPiezaSeleccionada->getColumna()]->setContenido("");
             $copiaPiezaSeleccionada->setCoordenadas($movimiento);
             $copiaJuego->tablero->setPiezaEnCasilla($copiaPiezaSeleccionada, $movimiento);
             
-            // Si el movimiento no deja al rey en jaque, es legal
+            // Si el movimiento no deja al rey en jaque, se puede realizar
             if (!$copiaJuego->estaEnJaque($copiaJuego)) {
                 $movimientosPosibles[] = $movimiento;
             }
         }
         return $movimientosPosibles;
     }
+
+    /**
+     * Comprueba que tipo de enroque se quiere hacer y que jugador lo va a realizar y llama a la función realizarEnroque con estos datos
+     * @param object $ficha
+     * @param string $casilla
+     * @param object $jugadorActual
+     * @return void
+     */
     private function manejarEnroque($ficha, $casilla, $jugadorActual) {
         $columnaRey = $ficha->getColumna();
         $filaRey = $ficha->getFila();
         $color = $ficha->getColor();
     
-        if ($casilla === $filaRey . ($columnaRey - 2)) { // Enroque corto
+        if ($casilla === $filaRey.($columnaRey - 2)) { // Enroque corto
             $this->realizarEnroque($jugadorActual, $color, 'corto');
-        } elseif ($casilla === $filaRey . ($columnaRey + 2)) { // Enroque largo
+        } elseif ($casilla === $filaRey.($columnaRey + 2)) { // Enroque largo
             $this->realizarEnroque($jugadorActual, $color, 'largo');
         }
     }
     
+    /**
+     * Mueve a la torre dependiendo del tipo de enroque y jugador actual
+     * @param object $jugadorActual
+     * @param string $color
+     * @param string $tipoEnroque
+     * @return void
+     */
     private function realizarEnroque($jugadorActual, $color, $tipoEnroque) {
         if ($tipoEnroque === 'corto') {
             $coordenadasTorreInicial = ($color === 'blanca') ? '70' : '00';
@@ -332,6 +349,11 @@ class Juego {
         $this->setPiezasEnTablero();
     }
 
+    /**
+     * Comprueba si el jugador actual no puede realizar ningún movimiento,
+     * de ser así llama al método finalPartida()
+     * @return bool|void
+     */
     public function comprobarJaqueMate() {
         $movimientosPosiblesTotales = [];
         foreach ($this->jugadorActual->getFichasVivas() as $pieza) {
@@ -345,6 +367,11 @@ class Juego {
         $this->finalPartida($this->jugadorRival);
     }
 
+    /**
+     * Muestra un modal indicando el final de la partida con un botón para volver a jugar
+     * @param object $jugadorGanador
+     * @return void
+     */
     private function finalPartida($jugadorGanador) {
         echo "<div class='modalBackground'>";
         echo "<div class='modalFinal'>";

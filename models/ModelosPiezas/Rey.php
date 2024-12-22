@@ -7,6 +7,7 @@ class Rey extends Pieza {
     /** @var string Identificador del tipo de pieza */
     public string $tipo = "Rey";
 
+    /** @var bool Identifica si el rey se ha movido o no */
     public bool $seHaMovido = false;
 
     /**
@@ -56,8 +57,14 @@ class Rey extends Pieza {
         return $casillas;
     }
 
+    /**
+     * Realiza las comprobaciones necesarias para saber si el rey puede enrocar o no
+     * @param string $lado
+     * @param string $color
+     * @param object $tablero
+     * @return bool
+     */
     private function puedeEnrocar($lado, $color, $tablero) {
-        // Definir las posiciones dependiendo del color
         $torrePosicion = ($color === 'blanca') 
             ? (($lado === 'derecha') ? '77' : '70') 
             : (($lado === 'derecha') ? '07' : '00');
@@ -66,7 +73,7 @@ class Rey extends Pieza {
             ? (($lado === 'derecha') ? ['75', '76'] : ['71', '72', '73'])
             : (($lado === 'derecha') ? ['05', '06'] : ['01', '02', '03']);
         
-        // Verificar que la torre está presente, es del color correcto, y no se ha movido
+        // Verificar que esa casilla no está vacía, contiene una torre, es del color correcto, y no se ha movido
         $torre = $tablero->getCasilla($torrePosicion)->getContenido();
         if ($torre === '' || $torre->getTipo() !== 'Torre' || $torre->getColor() !== $color || $torre->seHaMovido === true) {
             return false;

@@ -6,6 +6,8 @@
 class Torre extends Pieza {
     /** @var string Identificador del tipo de pieza */
     public string $tipo = "Torre";
+
+    /** @var bool Identifica si la torre se ha movido o no */
     public bool $seHaMovido = false;
 
     /**
