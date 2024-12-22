@@ -13,4 +13,5 @@ Mi proyecto implementa casi todas las reglas del ajedrez, incluyendo:
 
 
 ## Desarrollo
-Todos los avances en el desarrollo de este proyecto están reflejados en mi repositorio de git [Proyecto ajedrez](https://github.com/David0450/Proyecto-ajedrez)
+Todos los avances en el desarrollo de este proyecto están reflejados en mi repositorio de git [Proyecto ajedrez](https://github.com/David0450/Proyecto-ajedrez).
+Para consultar la documentación, dentro del proyecto hay un directorio docs con un index.html que contiene toda la documentación.
