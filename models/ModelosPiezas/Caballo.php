@@ -15,7 +15,7 @@ class Caballo extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
         $casillasPosibles = [
             "arribaIzquierda" => ($this->getFila()-2).($this->getColumna()-1),

@@ -7,12 +7,14 @@
 class Juego {
     /** @var int Número de turno actual de la partida */
     private int $turno = 1;
-
+    
     /** @var object Objeto tablero del juego */
     private object $tablero;
-
+    
     /** @var array Lista de jugadores de la partida */
     public array $jugadores;
+    private object $jugadorActual;
+    private object $jugadorRival;
 
     /** @var array Lista de piezas de cada color */
     private array $piezas;
@@ -28,6 +30,8 @@ class Juego {
             "blanca" => new Jugador("blanca"),
             "negra" => new Jugador("negra")
         ];
+        $this->jugadorActual = $this->jugadores['blanca'];
+        $this->jugadorRival = $this->jugadores['negra'];
         $this->setPiezasEnTablero();
         $this->asociarPiezasJugadores();
     }
@@ -61,6 +65,9 @@ class Juego {
      * @return void
      */
     public function pasarTurno() {
+        $jugadorTemporal = $this->jugadorRival;
+        $this->jugadorRival = $this->jugadorActual;
+        $this->jugadorActual = $jugadorTemporal;
         $this->turno++;
     }
 
@@ -146,11 +153,7 @@ class Juego {
      */
     public function seleccionarFicha() {
         $this->limpiarBotones();
-        if ($this->turno % 2 !== 0) {
-            $color = "blancas";
-        } elseif ($this->turno % 2 === 0) {
-            $color = "negras";
-        }
+        $color = $this->jugadorActual->getColor().'s';
 
         foreach($this->piezas[$color] as $piezas) {
             if(is_int($piezas->getFila())) {
@@ -169,8 +172,8 @@ class Juego {
         $this->seleccionarFicha();
         $casilla = $this->tablero->getCasilla($coordenadas);
         $pieza = $casilla->getContenido();
-        $color = $this->getTurno() % 2 === 0 ? 'negra' : 'blanca';
-        $casillasMovibles = $this->getMovimientosPosibles($color, $coordenadas);
+        $color = $this->jugadorActual->getColor();
+        $casillasMovibles = $this->getMovimientosPosibles($coordenadas);
         //$casillasMovibles = $pieza->movimiento($this->tablero);
         if (count($casillasMovibles) === 0) {
             return;
@@ -196,16 +199,17 @@ class Juego {
      */
     public function moverFicha($casilla, $coordenadasFicha) {
         $this->limpiarBotones();
-        
-        if ($this->turno % 2 !== 0) {
-            $jugadorActual = $this->jugadores['blanca'];
-        } elseif ($this->turno % 2 === 0) {
-            $jugadorActual = $this->jugadores['negra'];
+
+        $ficha = $this->jugadorActual->getFicha($coordenadasFicha);
+        if (in_array($ficha->getTipo(),['Rey','Torre'])) {
+            $ficha->seHaMovido = true;
+            if ($ficha->getTipo() === 'Rey') {
+                $this->manejarEnroque($ficha,$casilla,$this->jugadorActual);
+            }
         }
 
-        $ficha = $jugadorActual->getFicha($coordenadasFicha);
         $this->tablero->casillas[$ficha->getFila()][$ficha->getColumna()]->setContenido("");
-        $jugadorActual->moverFicha($casilla, $coordenadasFicha);
+        $this->jugadorActual->moverFicha($casilla, $coordenadasFicha);
         $this->setPiezasEnTablero();
     }
 
@@ -216,14 +220,10 @@ class Juego {
      * @return void
      */
     public function matarFicha($coordenadasFichaMatar, $coordenadasFichaActual) {
-        if ($this->turno % 2 !== 0) {
-            $jugadorRival = $this->jugadores['negra'];
-        } elseif ($this->turno % 2 === 0) {
-            $jugadorRival = $this->jugadores['blanca'];
-        }  
-        $fichaMuerta = $jugadorRival->getFicha($coordenadasFichaMatar);
-        unset($jugadorRival->piezasVivas[array_search($fichaMuerta,$jugadorRival->getFichasVivas())]);
-        $jugadorRival->piezasMuertas[] = $fichaMuerta;
+
+        $fichaMuerta = $this->jugadorRival->getFicha($coordenadasFichaMatar);
+        unset($this->jugadorRival->piezasVivas[array_search($fichaMuerta,$this->jugadorRival->getFichasVivas())]);
+        $this->jugadorRival->piezasMuertas[] = $fichaMuerta;
         $fichaMuerta->setFila(null);
         $fichaMuerta->setColumna(null);
         $this->moverFicha($coordenadasFichaMatar, $coordenadasFichaActual);
@@ -269,24 +269,24 @@ class Juego {
      * @param string $coordenadasPiezaSeleccionada Coordenadas de la pieza a mover
      * @return array Lista de coordenadas donde la pieza puede moverse legalmente
      */
-    public function getMovimientosPosibles($colorActual, $coordenadasPiezaSeleccionada) {
+    public function getMovimientosPosibles($coordenadasPiezaSeleccionada) {
         $movimientosPosibles = [];
-        $piezaSeleccionada = $this->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
+        $piezaSeleccionada = $this->jugadorActual->getFicha($coordenadasPiezaSeleccionada);
         
         // Obtiene todos los movimientos teóricos de la pieza
-        $movimientosTeoricos = $piezaSeleccionada->movimiento($this->tablero, null);
+        $movimientosTeoricos = $piezaSeleccionada->movimiento($this->tablero);
         
         // Para cada movimiento teórico, verifica si deja al rey en jaque
         foreach($movimientosTeoricos as $movimiento) {
             // Crea una copia profunda del estado actual del juego
             $copiaJuego = clone $this;
-            $copiaPiezaSeleccionada = $copiaJuego->jugadores[$colorActual]->getFicha($coordenadasPiezaSeleccionada);
+            $copiaPiezaSeleccionada = $copiaJuego->jugadores[$this->jugadorActual->getColor()]->getFicha($coordenadasPiezaSeleccionada);
             
             // Realiza el movimiento en la copia
             $casillaDestino = $copiaJuego->tablero->getCasilla($movimiento);
             if ($casillaDestino->getContenido() !== "") {
                 // Si hay una pieza en el destino, simula una captura
-                $colorRival = $colorActual === 'blanca' ? 'negra' : 'blanca';
+                $colorRival = $this->jugadorRival->getColor();
                 $jugadorRival = $copiaJuego->jugadores[$colorRival];
                 $piezaRival = $jugadorRival->getFicha($movimiento);
                 if ($piezaRival) {
@@ -306,26 +306,43 @@ class Juego {
         }
         return $movimientosPosibles;
     }
+    private function manejarEnroque($ficha, $casilla, $jugadorActual) {
+        $columnaRey = $ficha->getColumna();
+        $filaRey = $ficha->getFila();
+        $color = $ficha->getColor();
+    
+        if ($casilla === $filaRey . ($columnaRey - 2)) { // Enroque corto
+            $this->realizarEnroque($jugadorActual, $color, 'corto');
+        } elseif ($casilla === $filaRey . ($columnaRey + 2)) { // Enroque largo
+            $this->realizarEnroque($jugadorActual, $color, 'largo');
+        }
+    }
+    
+    private function realizarEnroque($jugadorActual, $color, $tipoEnroque) {
+        if ($tipoEnroque === 'corto') {
+            $coordenadasTorreInicial = ($color === 'blanca') ? '70' : '00';
+            $coordenadasTorreFinal = ($color === 'blanca') ? '73' : '03';
+        } else {
+            $coordenadasTorreInicial = ($color === 'blanca') ? '77' : '07';
+            $coordenadasTorreFinal = ($color === 'blanca') ? '75' : '05';
+        }
+    
+        $jugadorActual->moverFicha($coordenadasTorreFinal, $coordenadasTorreInicial);
+        $this->tablero->casillas[$coordenadasTorreInicial[0]][$coordenadasTorreInicial[1]]->setContenido("");
+        $this->setPiezasEnTablero();
+    }
 
     public function comprobarJaqueMate() {
-        if ($this->turno % 2 === 0) {
-            $jugadorActual = $this->jugadores['negra'];
-            $jugadorRival = $this->jugadores['blanca'];
-        } else {
-            $jugadorActual = $this->jugadores['blanca'];
-            $jugadorRival = $this->jugadores['negra'];
-        }
-
         $movimientosPosiblesTotales = [];
-        foreach ($jugadorActual->getFichasVivas() as $pieza) {
-            $movimientosPosiblesTotales[] = $this->getMovimientosPosibles($jugadorActual->getColor(),$pieza->getCoordenadas());
+        foreach ($this->jugadorActual->getFichasVivas() as $pieza) {
+            $movimientosPosiblesTotales[] = $this->getMovimientosPosibles($pieza->getCoordenadas());
         }
         foreach($movimientosPosiblesTotales as $subarrayMovimientos) {
             if (!empty($subarrayMovimientos)) {
                 return false;
             }
         }
-        $this->finalPartida($jugadorRival);
+        $this->finalPartida($this->jugadorRival);
     }
 
     private function finalPartida($jugadorGanador) {

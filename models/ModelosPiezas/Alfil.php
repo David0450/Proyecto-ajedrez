@@ -13,13 +13,13 @@ class Alfil extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
         
         // Movimiento diagonal inferior derecha
         $columna = $this->columna + 1;
         $fila = $this->fila + 1;
-        while($tablero->getCasilla($fila.$columna) != false) {
+        while($tablero->getCasilla($fila.$columna) != false) { // Mientras la casilla existe
             if ($tablero->getCasilla($fila.$columna)->getContenido() !== "") {
                 if ($tablero->getCasilla($fila.$columna)->getContenido()->getColor() === $this->color) {
                     break;

@@ -13,7 +13,7 @@ class Reina extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
 
         // Movimiento perpendicular inferior

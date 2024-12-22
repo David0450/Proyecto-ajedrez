@@ -6,6 +6,7 @@
 class Torre extends Pieza {
     /** @var string Identificador del tipo de pieza */
     public string $tipo = "Torre";
+    public bool $seHaMovido = false;
 
     /**
      * Calcula los movimientos posibles de la torre en el tablero
@@ -13,7 +14,7 @@ class Torre extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
         
         // Movimiento perpendicular inferior

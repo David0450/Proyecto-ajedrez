@@ -17,7 +17,7 @@ class Peon extends Pieza {
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
 
         // Movimientos para peones blancos (se mueven hacia arriba en el tablero)

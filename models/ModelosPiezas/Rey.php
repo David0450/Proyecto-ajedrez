@@ -7,13 +7,17 @@ class Rey extends Pieza {
     /** @var string Identificador del tipo de pieza */
     public string $tipo = "Rey";
 
+    public bool $seHaMovido = false;
+
     /**
      * Calcula los movimientos posibles del rey en el tablero
-     * El rey se mueve una casilla en cualquier dirección
+     * El rey se mueve una casilla en cualquier dirección y tiene un movimiento especial:
+     * - Si no se ha movido en toda la partida puede moverse 2 casillas en la dirección de la torre de su color que tampoco se haya movido, 
+     *   moviendo la torre una casilla al lado del rey en la dirección contraria.
      * @param Tablero $tablero Instancia del tablero de juego
      * @return array Array con las coordenadas de las casillas donde puede moverse
      */
-    public function movimiento($tablero, $movimientosRival = null) {
+    public function movimiento($tablero) {
         $casillas = [];
         $casillasPosibles = [
             "arriba" => ($this->getFila()-1).$this->getColumna(), // Arriba
@@ -23,22 +27,60 @@ class Rey extends Pieza {
             "arribaIzquierda" => ($this->getFila()-1).$this->getColumna()-1, // Arriba izquierda
             "arribaDerecha" => ($this->getFila()-1).$this->getColumna()+1, // Arriba derecha
             "abajoIzquierda" => ($this->getFila()+1).$this->getColumna()-1, // Abajo izquierda
-            "abajoDerecha" => ($this->getFila()+1).$this->getColumna()+1 // Abajo derecha
+            "abajoDerecha" => ($this->getFila()+1).$this->getColumna()+1, // Abajo derecha
+            "dosDerecha" => $this->getFila().$this->getColumna()+2, // Dos derecha (enroque)
+            "dosIzquierda" => $this->getFila().$this->getColumna()-2, // Dos izquierda (enroque)
         ];
-        foreach($casillasPosibles as $casilla) {
-            if ($tablero->getCasilla($casilla) !== false) {
-                if($tablero->getCasilla($casilla)->getContenido() === '') {
-                    $casillas[] = $casilla;
+        foreach($casillasPosibles as $key => $casilla) {
+            if ($tablero->getCasilla($casilla) !== false) { // Si la casilla existe
+                if($tablero->getCasilla($casilla)->getContenido() === '') { // Si está vacía
+                    $casillas[$key] = $casilla;
                 } else {
                     if($tablero->getCasilla($casilla)->getContenido()->getColor() !== $this->color) {
-                        $casillas[] = $casilla;
+                        $casillas[$key] = $casilla;
                     }
                 }
+            }
+        }
+
+        if ($this->seHaMovido) {
+            unset($casillas['dosIzquierda'], $casillas['dosDerecha']);
+        } else {
+            if (!$this->puedeEnrocar('derecha', $this->color, $tablero)) {
+                unset($casillas['dosDerecha']);
+            }
+            if (!$this->puedeEnrocar('izquierda', $this->color, $tablero)) {
+                unset($casillas['dosIzquierda']);
             }
         }
         return $casillas;
     }
 
+    private function puedeEnrocar($lado, $color, $tablero) {
+        // Definir las posiciones dependiendo del color
+        $torrePosicion = ($color === 'blanca') 
+            ? (($lado === 'derecha') ? '77' : '70') 
+            : (($lado === 'derecha') ? '07' : '00');
+        
+        $casillasEntreReyYTorres = ($color === 'blanca')
+            ? (($lado === 'derecha') ? ['75', '76'] : ['71', '72', '73'])
+            : (($lado === 'derecha') ? ['05', '06'] : ['01', '02', '03']);
+        
+        // Verificar que la torre está presente, es del color correcto, y no se ha movido
+        $torre = $tablero->getCasilla($torrePosicion)->getContenido();
+        if ($torre === '' || $torre->getTipo() !== 'Torre' || $torre->getColor() !== $color || $torre->seHaMovido === true) {
+            return false;
+        }
+    
+        // Verificar que las casillas entre el rey y la torre están vacías
+        foreach ($casillasEntreReyYTorres as $posicion) {
+            if ($tablero->getCasilla($posicion)->getContenido() !== '') {
+                return false;
+            }
+        }
+    
+        return true;
+    }
     /**
      * Devuelve la representación visual HTML del rey
      * Utiliza los iconos de Font Awesome para mostrar la pieza
