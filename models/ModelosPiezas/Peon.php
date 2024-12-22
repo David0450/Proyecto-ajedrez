@@ -33,7 +33,7 @@ class Peon extends Pieza {
                 $casillas[] = $casillasPosibles["dosDelante"];
             }
             // Siempre que no tenga una pieza delante puede moverse una casilla
-            if ($tablero->getCasilla($this->getFila()-1 . $this->getColumna())->getContenido() === "") {
+            if ($tablero->getCasilla($casillasPosibles['unaDelante']) !== false && $tablero->getCasilla($casillasPosibles['unaDelante'])->getContenido() === "") {
                 $casillas[] = $casillasPosibles["unaDelante"];
             }
             // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga
@@ -66,7 +66,7 @@ class Peon extends Pieza {
                 $casillas[] = $casillasPosibles["dosDelante"];
             }
             // Siempre que no tenga una pieza delante puede moverse una casilla
-            if ($tablero->getCasilla($casillasPosibles["unaDelante"])->getContenido() === "") {
+            if ($tablero->getCasilla($casillasPosibles['unaDelante'] !== false) && $tablero->getCasilla($casillasPosibles["unaDelante"])->getContenido() === "") {
                 $casillas[] = $casillasPosibles["unaDelante"];
             }
             // Si tiene una pieza enemiga en su diagonal hacia delante, puede moverse a esa casilla matando a la pieza enemiga

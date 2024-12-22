@@ -212,6 +212,15 @@ class Juego {
             }
         }
 
+        // ! PROMOCION PEON NO FUNCIONAL
+        /**if ($ficha->getTipo() === 'Peon') {
+            if ($ficha->getColor() === 'blanca' && $casilla[0] === '0') {
+                $this->modalPromocionPeon($casilla, $ficha);
+            } elseif ($ficha->getColor() === 'negra' && $casilla[0] === '7') {
+                $this->modalPromocionPeon($casilla,$ficha);
+            }
+        }*/
+
         $this->tablero->casillas[$ficha->getFila()][$ficha->getColumna()]->setContenido("");
         $this->jugadorActual->moverFicha($casilla, $coordenadasFicha);
         $this->setPiezasEnTablero();
@@ -381,6 +390,78 @@ class Juego {
         echo "<h3>En el turno ".$this->turno."</h3>";
         echo "<form action='#' method='post'>";
         echo "<button type='submit' class='reiniciarPartida' name='borrarSesion'>Reiniciar partida</button>";
+        echo "</form>";
+        echo "</div>";
+        echo "</div>";
+    }
+
+    /**
+     * Se encarga de modificar el tipo de pieza del peon que va a promocionar
+     * @param mixed $coordenadasFicha
+     * @param mixed $nuevaFichaTipo
+     * @return void
+     */
+    public function promocionPeon($coordenadasFicha, $nuevaFichaTipo) {
+        // ! NO FUNCIONAL
+        $ficha = $this->tablero->getCasilla($coordenadasFicha)->getContenido();
+        $this->tablero->casillas[$ficha->getFila()][$ficha->getColumna()]->setContenido("");
+        $color = $ficha->getColor();
+        $nuevasFichasVivas = $this->jugadores[$color]->getFichasVivas();
+        $key = array_search($ficha,$nuevasFichasVivas);
+        unset($nuevasFichasVivas[$key]);
+        if ($nuevaFichaTipo === 'alfil') {
+            $nuevaFicha = new Alfil($color,$ficha->getFila(),$ficha->getColumna());
+        } elseif ($nuevaFichaTipo === 'caballo') {
+            $nuevaFicha = new Caballo($color,$ficha->getFila(),$ficha->getColumna());
+        } elseif ($nuevaFichaTipo === 'torre') {
+            $nuevaFicha = new Torre($color,$ficha->getFila(),$ficha->getColumna());
+        } elseif ($nuevaFichaTipo === 'reina') {
+            $nuevaFicha = new Reina($color,$ficha->getFila(),$ficha->getColumna());
+        }
+        array_push($nuevasFichasVivas,$nuevaFicha);
+        $this->jugadores[$color]->setFichasVivas($nuevasFichasVivas);
+        $this->tablero->setPiezaEnCasilla($nuevaFicha,$coordenadasFicha);
+        print_r($this->jugadores[$color]->getFichasVivas());
+        $this->setPiezasEnTablero();
+    }
+
+    /**
+     * Se encarga de mostrar el modal para promocionar el peon
+     * @param string $casilla
+     * @param object $ficha
+     * @return void
+     */
+    private function modalPromocionPeon($casilla, $ficha){
+        echo "<div class='modalBackground'>";
+        echo "<div class='modalPromocion'>";
+        echo "<h2>Promoción peón</h2>";
+        echo "<form action='#' method='get'>";
+        echo "<input type='hidden' name='coordenadasFicha' value='".$casilla."'>";
+
+        echo "<button type='submit' name='tipoPieza' value='alfil'>";
+        echo $ficha->getColor() == "negra" ? // Icono alfil 
+            '<i class="fa-solid fa-chess-bishop"></i>' : 
+            '<i style="color: #f5f5f5;text-shadow: 1px 1px 1px black, 1px -1px 1px black, -1px -1px 1px black, -1px 1px 1px black;" class="fa-solid fa-chess-bishop"></i>';
+        echo "</button>";
+
+        echo "<button type='submit' name='tipoPieza' value='caballo'>";
+        echo $ficha->getColor() == "negra" ? // Icono caballo
+            '<i class="fa-solid fa-chess-knight"></i>' : 
+            '<i style="color: #f5f5f5;text-shadow: 1px 1px 1px black, 1px -1px 1px black, -1px -1px 1px black, -1px 1px 1px black;" class="fa-solid fa-chess-knight"></i>';
+        echo "</button>";
+
+        echo "<button type='submit' name='tipoPieza' value='torre'>";
+        echo $ficha->getColor() == "negra" ? // Icono torre
+            '<i class="fa-solid fa-chess-rook"></i>' : 
+            '<i style="color: #f5f5f5;text-shadow: 1px 1px 1px black, 1px -1px 1px black, -1px -1px 1px black, -1px 1px 1px black;" class="fa-solid fa-chess-rook"></i>';
+        echo "</button>";
+
+        echo "<button type='submit' name='tipoPieza' value='reina'>";
+        echo $ficha->getColor() == "negra" ? // Icono reina
+            '<i class="fa-solid fa-chess-queen"></i>' : 
+            '<i style="color: #f5f5f5;text-shadow: 1px 1px 1px black, 1px -1px 1px black, -1px -1px 1px black, -1px 1px 1px black;" class="fa-solid fa-chess-queen"></i>';
+        echo "</button>";
+
         echo "</form>";
         echo "</div>";
         echo "</div>";

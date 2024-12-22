@@ -52,7 +52,9 @@
                 $juego->pasarTurno();
                 $juego->comprobarJaqueMate();
                 $juego->seleccionarFicha();
-            } else {
+            } /**else if(isset($_GET["tipoPieza"])) {
+                $juego->promocionPeon($_GET["coordenadasFicha"], $_GET["tipoPieza"]);
+            }*/ else {
                 $juego->seleccionarFicha();
             }
             $_SESSION['juego'] = serialize($juego);
