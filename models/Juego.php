@@ -304,8 +304,42 @@ class Juego {
                 $movimientosPosibles[] = $movimiento;
             }
         }
-        
         return $movimientosPosibles;
+    }
+
+    public function comprobarJaqueMate() {
+        if ($this->turno % 2 === 0) {
+            $jugadorActual = $this->jugadores['negra'];
+            $jugadorRival = $this->jugadores['blanca'];
+        } else {
+            $jugadorActual = $this->jugadores['blanca'];
+            $jugadorRival = $this->jugadores['negra'];
+        }
+
+        $movimientosPosiblesTotales = [];
+        foreach ($jugadorActual->getFichasVivas() as $pieza) {
+            $movimientosPosiblesTotales[] = $this->getMovimientosPosibles($jugadorActual->getColor(),$pieza->getCoordenadas());
+        }
+        foreach($movimientosPosiblesTotales as $subarrayMovimientos) {
+            if (!empty($subarrayMovimientos)) {
+                return false;
+            }
+        }
+        $this->finalPartida($jugadorRival);
+    }
+
+    private function finalPartida($jugadorGanador) {
+        echo "<div class='modalBackground'>";
+        echo "<div class='modalFinal'>";
+        echo "<h2>Ganan ";
+        echo $jugadorGanador->getColor() == 'blanca' ? "<span class='blanca'>blancas</span>" : "<span class='negra'>negras</span>";
+        echo "</h2>";
+        echo "<h3>En el turno ".$this->turno."</h3>";
+        echo "<form action='#' method='post'>";
+        echo "<button type='submit' class='reiniciarPartida' name='borrarSesion'>Reiniciar partida</button>";
+        echo "</form>";
+        echo "</div>";
+        echo "</div>";
     }
 
     /**

@@ -45,10 +45,12 @@
             } elseif (isset($_GET["moverFicha"]) && !isset($_GET["seleccionarFicha"])) {
                 $juego->moverFicha($_GET["moverFicha"][0].$_GET["moverFicha"][1] , $_GET["moverFicha"][3].$_GET["moverFicha"][4]);
                 $juego->pasarTurno();
+                $juego->comprobarJaqueMate();
                 $juego->seleccionarFicha();
             } elseif(isset($_GET["matarFicha"])) {
                 $juego->matarFicha($_GET["matarFicha"][0].$_GET["matarFicha"][1] , $_GET["matarFicha"][3].$_GET["matarFicha"][4]);
                 $juego->pasarTurno();
+                $juego->comprobarJaqueMate();
                 $juego->seleccionarFicha();
             } else {
                 $juego->seleccionarFicha();
@@ -105,7 +107,7 @@
                 </div>
             </div>
             <form action="#" method="post">
-                <button type="submit" name="borrarSesion">Reiniciar partida</button>
+                <button type="submit" class="reiniciarPartida" name="borrarSesion">Reiniciar partida</button>
             </form>
         </div>
     </main>

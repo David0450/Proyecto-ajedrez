@@ -47,6 +47,10 @@ class Jugador {
         return $this->piezasVivas;
     }
 
+    public function getColor() {
+        return $this->color;
+    }
+
     /**
      * Busca y devuelve una ficha específica según sus coordenadas
      * @param string $coordenadas Coordenadas de la ficha a buscar
